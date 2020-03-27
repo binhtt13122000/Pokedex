@@ -1,6 +1,5 @@
 import React from 'react'
 import {RepositoryFactory} from '../../repository/RepositoryFactory';
-import classes from './PokemonLib.module.css'
 import PokemonCard from '../pokemoncard/PokemonCard';
 const postsRepository = RepositoryFactory.get('posts');
 class pokemonLib extends React.Component {
@@ -13,7 +12,7 @@ class pokemonLib extends React.Component {
     }
 
     fetchPokemon = async () => {
-        const {data} = await postsRepository.get('pokemon', 0, 10);
+        const {data} = await postsRepository.get('pokemon', 0, 9);
         this.setState({pokemons: data.results})
     }
     render(){
@@ -21,7 +20,7 @@ class pokemonLib extends React.Component {
             return <PokemonCard key={index} pokemon={pokemon} />
         })
         return (
-            <div className={classes.FlexContainer}>
+            <div>
                 {pokemonList}
             </div>
         )

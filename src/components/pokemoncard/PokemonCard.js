@@ -1,6 +1,5 @@
 import React from 'react'
 import {RepositoryFactory} from '../../repository/RepositoryFactory';
-import classes from './PokemonCard.module.css';
 const postsRepository = RepositoryFactory.get('posts');
 class PokemonCard extends React.Component {
     state = {pokemonDetail: null }
@@ -20,9 +19,12 @@ class PokemonCard extends React.Component {
             card = <p>Don't have pokemon</p>
         } else {
             card = (
-                <div className={classes.Card}>
+                <div>
                     <img src={this.state.pokemonDetail.sprites.front_default} alt={this.state.pokemonDetail.name} />
-                    <div className={classes.Description}>{this.state.pokemonDetail.name}</div>
+                    <div>
+                        <button>View detail</button>
+                        <button>Add to team</button>
+                    </div>
                 </div>
             )
         }
