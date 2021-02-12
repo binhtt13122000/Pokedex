@@ -3,8 +3,8 @@ import AppBar from '@material-ui/core/AppBar';
 import IconButton from '@material-ui/core/IconButton';
 import MenuIcon from '@material-ui/icons/Menu';
 import Toolbar from '@material-ui/core/Toolbar';
-import Typography from '@material-ui/core/Typography';
-import { useStyles } from './style'
+import { useStyles } from './style';
+import Logo from '../../assets/logo.png';
 export const Header = (props) => {
     const classes = useStyles();
     return (
@@ -19,9 +19,8 @@ export const Header = (props) => {
                 >
                     <MenuIcon />
                 </IconButton>
-                <Typography variant="h6" noWrap>
-                    Responsive drawer
-                </Typography>
+                <div className={classes.flexGrow}></div>
+                <img src={Logo} alt="logo" width="100px" height="auto" className={classes.logo}/>
             </Toolbar>
         </AppBar>
     );

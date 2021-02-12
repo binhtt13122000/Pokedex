@@ -1,7 +1,5 @@
 import { makeStyles } from "@material-ui/core";
 
-const drawerWidth = 240;
-
 export const useStyles = makeStyles((theme) => ({
   appBar: {
     [theme.breakpoints.up('sm')]: {
@@ -16,4 +14,13 @@ export const useStyles = makeStyles((theme) => ({
       display: 'none',
     },
   },
+  logo: {
+    display: 'block',
+    cursor: 'pointer',
+  },
+  flexGrow: {
+    [theme.breakpoints.down('sm')]: {
+      flexGrow: 1
+    }
+  }
 }));
