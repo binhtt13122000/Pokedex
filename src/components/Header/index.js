@@ -5,6 +5,7 @@ import MenuIcon from '@material-ui/icons/Menu';
 import Toolbar from '@material-ui/core/Toolbar';
 import { useStyles } from './style';
 import Logo from '../../assets/logo.png';
+import { CustomTextField } from '../TextField';
 export const Header = (props) => {
     const classes = useStyles();
     return (
@@ -19,8 +20,10 @@ export const Header = (props) => {
                 >
                     <MenuIcon />
                 </IconButton>
-                <div className={classes.flexGrow}></div>
-                <img src={Logo} alt="logo" width="100px" height="auto" className={classes.logo}/>
+                <div className={classes.flexGrow} />
+                <img src={Logo} alt="logo" width="100px" height="auto" className={classes.logo} />
+                <div className={classes.flexGrowInput} />
+                <CustomTextField placeholder="Search Poke..." type="resize" className={classes.searchBar} />
             </Toolbar>
         </AppBar>
     );

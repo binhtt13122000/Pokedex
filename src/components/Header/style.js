@@ -22,5 +22,16 @@ export const useStyles = makeStyles((theme) => ({
     [theme.breakpoints.down('sm')]: {
       flexGrow: 1
     }
+  },
+  flexGrowInput: {
+    [theme.breakpoints.up('sm')]: {
+      flexGrow: 1
+    }
+  },
+  searchBar: {
+    display: 'none',
+    [theme.breakpoints.up('sm')]: {
+      display: 'block',
+    },
   }
 }));
