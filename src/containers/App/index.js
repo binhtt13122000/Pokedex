@@ -1,8 +1,9 @@
-import React, { useEffect, useState } from 'react';
+import React, { useState } from 'react';
 import { Header } from '../../components/Header';
 import { DrawerComponent } from '../../components/Drawer'
 import { useStyles } from './style';
 import CssBaseline from '@material-ui/core/CssBaseline';
+import { PokeCard } from '../../components/PokeCard';
 
 const App = () => {
   //state
@@ -13,10 +14,6 @@ const App = () => {
   const handleDrawerToggle = () => {
     setMobileOpen(!mobileOpen);
   };
-
-  useEffect(() => {
-    getPokemon();
-  }, [])
 
   //render
   return (
@@ -31,6 +28,7 @@ const App = () => {
         />
       <main className={classes.content}>
         <div className={classes.toolbar} />
+        <PokeCard />
       </main>
       <footer>
         c
