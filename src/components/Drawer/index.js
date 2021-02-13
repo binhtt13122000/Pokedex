@@ -1,16 +1,73 @@
 import React from 'react';
 import Drawer from '@material-ui/core/Drawer';
-import InboxIcon from '@material-ui/icons/MoveToInbox';
 import List from '@material-ui/core/List';
 import ListItem from '@material-ui/core/ListItem';
 import ListItemIcon from '@material-ui/core/ListItemIcon';
 import ListItemText from '@material-ui/core/ListItemText';
-import MailIcon from '@material-ui/icons/Mail';
 import Divider from '@material-ui/core/Divider';
 import { useStyles } from './style';
 import { useTheme } from '@material-ui/core/styles';
 import Hidden from '@material-ui/core/Hidden';
+import Logo from '../../assets/logo.png';
+import NotificationsActiveIcon from '@material-ui/icons/NotificationsActive';
+import PokeBall from '../../assets/pokeball.svg';
+import NintendoSwitch from '../../assets/nintendo-switch.svg';
+import Trainer from '../../assets/trainer.svg';
 
+const drawerItems = [
+    {
+        id: 1,
+        text: "Pokedex",
+        icon: <img src={PokeBall} alt="pokedex" width="30px" height="30px" />,
+        to: '/pokedex',
+        children: [
+            {
+                id: "Kanto",
+                text: "Kanto",
+                icon: <NotificationsActiveIcon />,
+                to: '/kanto/pokedex',
+            },
+            {
+                id: "Johto",
+                text: "Johto",
+                icon: <NotificationsActiveIcon />,
+                to: '/johto/pokedex',
+            }
+        ]
+    },
+    {
+        id: 2,
+        text: "Abilities",
+        icon: <img src={Trainer} alt="pokedex" width="30px" height="30px" />,
+        to: '/abilities'
+    },
+    {
+        id: 3,
+        text: "Types",
+        icon: <NotificationsActiveIcon />,
+        to: '/types'
+    },
+    {
+        id: 4,
+        text: "Games",
+        icon: <img src={NintendoSwitch} alt="pokedex" width="30px" height="30px" />,
+        to: '/games',
+        children: [
+            {
+                id: "GenI",
+                text: "Gen I",
+                icon: <NotificationsActiveIcon />,
+                to: '/generation1/pokedex',
+            },
+            {
+                id: "GenII",
+                text: "GenII",
+                icon: <NotificationsActiveIcon />,
+                to: '/generation2/pokedex',
+            }
+        ]
+    },
+]
 
 export const DrawerComponent = (props) => {
     //const
@@ -19,29 +76,20 @@ export const DrawerComponent = (props) => {
     const classes = useStyles();
     const theme = useTheme();
     //reused component
-    const drawer = (
-        <div>
-            <div className={classes.toolbar} />
+    const drawer = (isMobile) => {
+        return <div>
+            {isMobile ? <img className={classes.logo} src={Logo} width="200px" height="auto" alt="logo" /> : <div className={classes.toolbar} />}
             <Divider />
             <List>
-                {['Inbox', 'Starred', 'Send email', 'Drafts'].map((text, index) => (
-                    <ListItem button key={text}>
-                        <ListItemIcon>{index % 2 === 0 ? <InboxIcon /> : <MailIcon />}</ListItemIcon>
-                        <ListItemText primary={text} />
-                    </ListItem>
-                ))}
-            </List>
-            <Divider />
-            <List>
-                {['All mail', 'Trash', 'Spam'].map((text, index) => (
-                    <ListItem button key={text}>
-                        <ListItemIcon>{index % 2 === 0 ? <InboxIcon /> : <MailIcon />}</ListItemIcon>
-                        <ListItemText primary={text} />
+                {drawerItems.map((item, index) => (
+                    <ListItem button key={index}>
+                        <ListItemIcon>{item.icon}</ListItemIcon>
+                        <ListItemText primary={item.text} />
                     </ListItem>
                 ))}
             </List>
         </div>
-    );
+    }
 
     //render
     return (
@@ -60,7 +108,7 @@ export const DrawerComponent = (props) => {
                         keepMounted: true,
                     }}
                 >
-                    {drawer}
+                    {drawer(theme.breakpoints.up('sm'))}
                 </Drawer>
             </Hidden>
             <Hidden xsDown implementation="css">
@@ -71,7 +119,7 @@ export const DrawerComponent = (props) => {
                     variant="permanent"
                     open
                 >
-                    {drawer}
+                    {drawer(!theme.breakpoints.up('sm'))}
                 </Drawer>
             </Hidden>
         </nav>

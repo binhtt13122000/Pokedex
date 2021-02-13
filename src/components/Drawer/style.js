@@ -13,4 +13,10 @@ export const useStyles = makeStyles((theme) => ({
   drawerPaper: {
     width: DRAWER_SIZE,
   },
+  logo: {
+    display: 'block',
+    margin: '0 auto',
+    marginTop: '20px',
+    marginBottom: '20px'
+  }
 }));
