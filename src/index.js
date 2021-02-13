@@ -3,9 +3,13 @@ import ReactDOM from 'react-dom';
 import './index.css';
 import App from './containers/App';
 import * as serviceWorker from './serviceWorker';
+import { ThemeProvider } from '@material-ui/core';
+import { theme } from './utils/theme';
 
 ReactDOM.render(
-  <App />,
+    <ThemeProvider theme={theme}>
+      <App />
+    </ThemeProvider>,
   document.getElementById('root'),
 );
 
