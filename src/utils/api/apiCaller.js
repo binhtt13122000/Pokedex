@@ -1,5 +1,5 @@
 import Axios from 'axios';
-import {ROOT_API_URL} from '../constants/api.constants'
+import {POKE_ROOT_API} from '../../constants/poke'
 export const defaultHeader = {
     "Content-Type" : "application/json",
 }
@@ -7,12 +7,12 @@ export const defaultHeader = {
 export const request = (endpoint, method, headers, body, params) => {
     return Axios(
         {
-            url: ROOT_API_URL + endpoint,
+            url: POKE_ROOT_API + endpoint,
             method: method,
             headers: {...defaultHeader, ...headers},
             data: body,
             params: Object.assign(params),
-            withCredentials: true,
+            // withCredentials: true,
         }
     )
 }
