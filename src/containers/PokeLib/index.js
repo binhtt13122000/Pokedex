@@ -1,25 +1,13 @@
-import { Container, Grid, makeStyles } from '@material-ui/core';
+import { Grid, makeStyles } from '@material-ui/core';
 import React, { useEffect, useState } from 'react';
+import { Loading } from '../../components/Loading';
 import { PokeCard } from '../../components/PokeCard';
 import PokeApi from '../../services/PokeApi';
-import Loading from '../../assets/loading.gif';
 
-const useStyles = makeStyles({
-    loadingImage: {
-        display: 'block',
-        margin: '0 auto',
-        marginTop: 'auto',
-        marginBottom: 'auto'
-    },
-    loadingBackground: {
-        minHeight: '70vh'
-    }
-})
 export const PokeLib = () => {
     const [pokemonList, setPokemonList] = useState([]);
     const [loading, setLoading] = useState(false);
 
-    const classes = useStyles();
     useEffect(() => {
         const fetchPokemon = async () => {
             try {
@@ -52,13 +40,7 @@ export const PokeLib = () => {
     }, []);
 
     if (loading) {
-        return <Container>
-            <Grid className={classes.loadingBackground} container direction="row" justify="center" alignItems="center">
-                <Grid item>
-                    <img className={classes.loadingImage} width="300px" height="auto" src={Loading} alt="loading" />
-                </Grid>
-            </Grid>
-        </Container>
+        return <Loading />
     }
 
     return <div>
