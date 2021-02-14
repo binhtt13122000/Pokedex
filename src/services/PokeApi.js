@@ -1,9 +1,17 @@
-import { LIMIT, OFFSET, POKE_ROOT_API } from "../constants/poke";
+import { LIMIT, OFFSET } from "../constants/poke";
 import { get } from "../utils/api/apiCaller";
 
 class PokeApi {
-    getPokemon(limit = LIMIT, offset = OFFSET){
-        get(POKE_ROOT_API + "/pokemon", {}, {limit: limit, offset: offset});
+    getPokemon = async (offset = OFFSET) => {
+        return await get("/pokemon", {}, {limit: LIMIT, offset: offset});
+    }
+
+    getPokemonByIndex = async (index) => {
+        return await get(`/pokemon/${index}`, {}, {});
+    }
+
+    getPokemonByName = async (name) => {
+        return await get(`/pokemon/${name}`, {}, {});
     }
 }
 
