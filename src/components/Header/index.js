@@ -23,7 +23,7 @@ export const Header = (props) => {
                 <div className={classes.flexGrow} />
                 <img src={Logo} alt="logo" width="100px" height="auto" className={classes.logo} />
                 <div className={classes.flexGrowInput} />
-                <CustomTextField placeholder="Search Poke..." type="resize" className={classes.searchBar} />
+                <CustomTextField onChange={props.searchChange} value={props.search} placeholder="Search Poke..." type="resize" className={classes.searchBar} />
             </Toolbar>
         </AppBar>
     );

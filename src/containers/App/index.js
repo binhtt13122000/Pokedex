@@ -8,6 +8,8 @@ import { PokeLib } from '../PokeLib';
 const App = () => {
   //state
   const [mobileOpen, setMobileOpen] = useState(false);
+  const [ search, setSearch ] = useState("");
+
   //variable
   const classes = useStyles();
   //function
@@ -15,12 +17,17 @@ const App = () => {
     setMobileOpen(!mobileOpen);
   };
 
+  const searchChange = e => {
+    console.log(e.target.value)
+    setSearch(e.target.value);
+  }
+
   //render
   return (
     <div className={classes.root}>
       <CssBaseline />
       <header>
-        <Header handleDrawerToggle={handleDrawerToggle} />
+        <Header handleDrawerToggle={handleDrawerToggle} search={search} searchChange={searchChange} />
       </header>
         <DrawerComponent
           mobileOpen={mobileOpen}
