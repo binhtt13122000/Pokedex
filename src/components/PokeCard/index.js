@@ -5,7 +5,7 @@ import ReplaceImg from '../../assets/whothatpokemon.png'
 const useStyles = makeStyles(theme => ({
     card: {
         width: '330px',
-        height: 200,
+        minHeight: 200,
         margin: '0 auto',
         marginBottom: '20px',
         paddingTop: '10px',
@@ -47,7 +47,7 @@ export const PokeCard = (props) => {
     const showDetail = (e, name) => {
 
     }
-    
+
     const classes = useStyles();
     return <Card className={classes.card} onClick={e => showDetail(e, name)}>
         <Grid container>

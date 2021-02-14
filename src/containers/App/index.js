@@ -3,7 +3,8 @@ import { Header } from '../../components/Header';
 import { DrawerComponent } from '../../components/Drawer'
 import { useStyles } from './style';
 import CssBaseline from '@material-ui/core/CssBaseline';
-import { PokeLib } from '../PokeLib';
+import { PokeDetails } from '../PokeDetails';
+// import { PokeLib } from '../PokeLib';
 
 const App = () => {
   //state
@@ -35,7 +36,8 @@ const App = () => {
         />
       <main className={classes.content}>
         <div className={classes.toolbar} />
-        <PokeLib />
+        {/* <PokeLib /> */}
+        <PokeDetails />
       </main>
       <footer>
         c
