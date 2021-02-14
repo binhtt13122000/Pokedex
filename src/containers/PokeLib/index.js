@@ -45,13 +45,15 @@ export const PokeLib = () => {
     }
 
     const changePage = (e, value) => {
+        sessionStorage.setItem('page', value - 1)
         fetchPokemon(value - 1)
         console.log(page)
     }
 
 
     useEffect(() => {
-        fetchPokemon(0)
+        let pageIndex = parseInt(sessionStorage.getItem('page')) || 0;
+        fetchPokemon(pageIndex);
     }, []);
 
     if (loading) {

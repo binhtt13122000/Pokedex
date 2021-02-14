@@ -11,7 +11,8 @@ const useStyles = makeStyles(theme => ({
         paddingTop: '10px',
         [theme.breakpoints.up('md')]: {
             width: '80%'
-        }
+        },
+        cursor: 'pointer'
     },
     img: {
         display: 'block',
