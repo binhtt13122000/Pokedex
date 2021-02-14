@@ -6,6 +6,7 @@ import { Loading } from '../../components/Loading';
 import { calculatePokemonHightestStat, padLeadingZeros, calculatePokemonLowestStat, getListEvolution } from '../../utils/function';
 import { Fragment } from 'react';
 import Arrow from '../../assets/arrow.png'
+import { useLocation } from 'react-router';
 
 
 const BorderLinearProgress = withStyles((theme) => ({
@@ -143,7 +144,7 @@ const useStyles = makeStyles(theme => ({
 }))
 export const PokeDetails = () => {
     const classes = useStyles();
-
+    const location = useLocation();
     const [pokemon, setPokemon] = useState({});
     const [pokeDetails, setPokeDetails] = useState({});
     const [evolutionChains, setEvolutionChain] = useState([]);
@@ -153,8 +154,9 @@ export const PokeDetails = () => {
 
     const getPokemon = async () => {
         try {
+            let name = location.pathname.substring(location.pathname.lastIndexOf("/") + 1)
             setLoading(true);
-            const response = await Axios.get('https://pokeapi.co/api/v2/pokemon/4');
+            const response = await Axios.get('https://pokeapi.co/api/v2/pokemon/' + name);
             if (response.status === 200) {
                 setPokemon(response.data);
                 const responseDetail = await Axios.get(response.data.species.url);
@@ -163,7 +165,6 @@ export const PokeDetails = () => {
                     const evolutionChain = await Axios.get(responseDetail.data['evolution_chain'].url);
                     if (evolutionChain.status === 200) {
                         const evolveArr = getListEvolution(evolutionChain.data.chain);
-                        console.log(evolveArr)
                         setEvolutionChain(evolveArr);
                     }
                 }

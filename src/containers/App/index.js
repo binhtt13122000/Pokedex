@@ -3,10 +3,10 @@ import { Header } from '../../components/Header';
 import { DrawerComponent } from '../../components/Drawer'
 import { useStyles } from './style';
 import CssBaseline from '@material-ui/core/CssBaseline';
-import { PokeDetails } from '../PokeDetails';
+import { RouterComponent } from '../../routers';
 // import { PokeLib } from '../PokeLib';
 
-const App = () => {
+const App = ({children}) => {
   //state
   const [mobileOpen, setMobileOpen] = useState(false);
   const [ search, setSearch ] = useState("");
@@ -36,8 +36,7 @@ const App = () => {
         />
       <main className={classes.content}>
         <div className={classes.toolbar} />
-        {/* <PokeLib /> */}
-        <PokeDetails />
+        <RouterComponent />
       </main>
       <footer>
         c
