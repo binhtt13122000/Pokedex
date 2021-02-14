@@ -43,8 +43,13 @@ export const PokeCard = (props) => {
         src: image || ReplaceImg,
         err: false
     })
+
+    const showDetail = (e, name) => {
+
+    }
+    
     const classes = useStyles();
-    return <Card className={classes.card} >
+    return <Card className={classes.card} onClick={e => showDetail(e, name)}>
         <Grid container>
             <Grid item xs={6}>
                 <img className={classes.img} src={imgSrc.src} alt={name} width="100px" height="100px" />
