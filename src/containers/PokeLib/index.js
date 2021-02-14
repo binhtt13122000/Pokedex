@@ -1,11 +1,14 @@
-import { Grid, makeStyles } from '@material-ui/core';
+import { Grid } from '@material-ui/core';
 import React, { useEffect, useState } from 'react';
 import { Loading } from '../../components/Loading';
+import { CustomPagination } from '../../components/Pagination';
 import { PokeCard } from '../../components/PokeCard';
+import { OFFSET } from '../../constants/poke';
 import PokeApi from '../../services/PokeApi';
 
 export const PokeLib = () => {
     const [pokemonList, setPokemonList] = useState([]);
+    const [page, setPage] = useState(OFFSET)
     const [loading, setLoading] = useState(false);
 
     useEffect(() => {
@@ -44,6 +47,7 @@ export const PokeLib = () => {
     }
 
     return <div>
+        <CustomPagination />
         <Grid container>
             {pokemonList.map(pokemon => {
                 return <Grid item key={pokemon.order} xs={12} sm={4}>
