@@ -62,7 +62,6 @@ export const TypeChip = ({type}) => {
             backgroundColor: '#ee99ee'
         },
         size: {
-            width: '70px'
         },
         textDecoration: {
             color: 'white',

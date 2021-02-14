@@ -1,20 +1,21 @@
-import { Button, Card, CardActionArea, CardActions, CardContent, CardMedia, Grid, makeStyles, Typography } from '@material-ui/core';
-import React from 'react';
+import { Grid, Card, makeStyles, Typography } from '@material-ui/core';
+import React, { useState } from 'react';
 import { TypeChip } from '../TypeChip';
-
+import ReplaceImg from '../../assets/whothatpokemon.png'
 const useStyles = makeStyles(theme => ({
     card: {
         width: '330px',
-        minHeight: 150,
+        height: 200,
         margin: '0 auto',
         marginBottom: '20px',
+        paddingTop: '10px',
         [theme.breakpoints.up('md')]: {
             width: '80%'
         }
     },
     img: {
         display: 'block',
-        margin: '0 auto'
+        margin: '0 auto',
     },
     caption: {
         fontWeight: '600',
@@ -36,12 +37,17 @@ const useStyles = makeStyles(theme => ({
 
 export const PokeCard = (props) => {
     const { height, weight, types, order, image, name } = props.pokemon;
+
+    const [ imgSrc, setImgSrc ] = useState({
+        src: image || ReplaceImg,
+        err: false
+    })
     const classes = useStyles();
     return <Card className={classes.card} >
         <Grid container>
             <Grid item xs={6}>
-                <img className={classes.img} src={image} alt={name} />
-                <Typography className={classes.caption} variant="caption" display="block" gutterBottom>{name.toUpperCase()}</Typography>
+                <img className={classes.img} src={imgSrc.src} alt={name} width="100px" height="100px" />
+                <Typography className={`${classes.caption} ${classes.marginTop}`} variant="caption" display="block" gutterBottom>{name.toUpperCase()}</Typography>
             </Grid>
             <Grid item xs={6}>
                 <Typography className={`${classes.marginTop} ${classes.subtitle}`} variant="caption" display="block" gutterBottom>ORDER</Typography>
