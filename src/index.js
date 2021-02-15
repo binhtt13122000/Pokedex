@@ -5,12 +5,15 @@ import App from './containers/App';
 import * as serviceWorker from './serviceWorker';
 import { CssBaseline, ThemeProvider } from '@material-ui/core';
 import { theme } from './utils/theme';
+import { BrowserRouter } from 'react-router-dom';
 
 ReactDOM.render(
-    <ThemeProvider theme={theme}>
-      <CssBaseline />
+  <ThemeProvider theme={theme}>
+    <CssBaseline />
+    <BrowserRouter>
       <App />
-    </ThemeProvider>,
+    </BrowserRouter>
+  </ThemeProvider>,
   document.getElementById('root'),
 );
 

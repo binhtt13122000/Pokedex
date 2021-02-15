@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useState } from 'react';
 import Drawer from '@material-ui/core/Drawer';
 import List from '@material-ui/core/List';
 import ListItem from '@material-ui/core/ListItem';
@@ -13,13 +13,14 @@ import NotificationsActiveIcon from '@material-ui/icons/NotificationsActive';
 import PokeBall from '../../assets/pokeball.svg';
 import NintendoSwitch from '../../assets/nintendo-switch.svg';
 import Trainer from '../../assets/trainer.svg';
+import { useHistory } from 'react-router';
 
 const drawerItems = [
     {
         id: 1,
         text: "Pokedex",
         icon: <img src={PokeBall} alt="pokedex" width="30px" height="30px" />,
-        to: '/pokedex',
+        to: '/',
         children: [
             {
                 id: "Kanto",
@@ -70,6 +71,14 @@ const drawerItems = [
 ]
 
 export const DrawerComponent = (props) => {
+    const [selectedIndex, setSelectedIndex] = useState(1);
+    const history = useHistory();
+    const handleListItemClick = (event, index, path) => {
+        setSelectedIndex(index);
+        if(path){
+            history.push(path)
+        }
+    };
     //const
     const { mobileOpen, handleDrawerToggle, window } = props;
     const container = window !== undefined ? () => window().document.body : undefined;
@@ -82,7 +91,7 @@ export const DrawerComponent = (props) => {
             <Divider />
             <List>
                 {drawerItems.map((item, index) => (
-                    <ListItem button key={index}>
+                    <ListItem button key={index} onClick={e => handleListItemClick(e, item.id, item.to)} selected={selectedIndex === item.id}>
                         <ListItemIcon>{item.icon}</ListItemIcon>
                         <ListItemText primary={item.text} />
                     </ListItem>

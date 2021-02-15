@@ -1,5 +1,5 @@
 import React from 'react';
-import { Switch, BrowserRouter } from 'react-router-dom';
+import { Switch } from 'react-router-dom';
 import { Route } from 'react-router'
 import { PokeDetails } from '../containers/PokeDetails';
 import { PokeLib } from '../containers/PokeLib';
@@ -20,23 +20,26 @@ const routes = [
         path: "/pokemon/:name",
         name: "pokemon",
         component: PokeDetails
-    }, 
+    },
     {
         path: "/not_found",
+        name: "Not Found",
+        component: NotFound
+    },
+    {
+        path: '/ability',
         name: "Not Found",
         component: NotFound
     }
 ]
 export const RouterComponent = () => {
-    return <BrowserRouter>
-        <Switch>
-            {routes.map((route, index) => {
-                return <PublicRoute key={index}
-                    exact={true}
-                    path={route.path}
-                    component={route.component}
-                />
-            })}
-        </Switch>
-    </BrowserRouter>
+    return <Switch>
+        {routes.map((route, index) => {
+            return <PublicRoute key={index}
+                exact={true}
+                path={route.path}
+                component={route.component}
+            />
+        })}
+    </Switch>
 }
