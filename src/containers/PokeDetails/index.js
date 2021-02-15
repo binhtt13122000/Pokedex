@@ -7,7 +7,7 @@ import { calculatePokemonHightestStat, padLeadingZeros, calculatePokemonLowestSt
 import { Fragment } from 'react';
 import Arrow from '../../assets/arrow.png'
 import { useHistory, useLocation } from 'react-router';
-
+import NotFound from '../../assets/notfound.jpg';
 
 const BorderLinearProgress = withStyles((theme) => ({
     root: {
@@ -52,7 +52,8 @@ const useStyles = makeStyles(theme => ({
         paddingBottom: '10px',
         [theme.breakpoints.down('sm')]: {
             marginTop: '20px'
-        }
+        },
+        margin: '0 auto'
         // backgroundColor: '#b2ebf2',
         // paddingRight: '20px'
     },
@@ -163,10 +164,11 @@ export const PokeDetails = () => {
     const matches = useMediaQuery('(min-width:600px)');
     const history = useHistory();
     const mounted = useRef(true);
-    const getPokemon = async () => {
+    const getPokemon = async (name, isNeedLoading) => {
         try {
-            let name = location.pathname.substring(location.pathname.lastIndexOf("/") + 1)
-            setLoading(true);
+            if(isNeedLoading){
+                setLoading(true);
+            }
             const response = await Axios.get('https://pokeapi.co/api/v2/pokemon/' + name);
             if (response.status === 200) {
                 if (mounted.current) {
@@ -205,9 +207,15 @@ export const PokeDetails = () => {
         }
     }
 
+    const setAthotherVersion = form => {
+        setSelectedImg({ image: form.img, name: form.name })
+        getPokemon(form.name, false);
+    }
+
     useEffect(() => {
         mounted.current = true;
-        getPokemon(mounted);
+        let name = location.pathname.substring(location.pathname.lastIndexOf("/") + 1)
+        getPokemon(name, true);
         return () => {
             mounted.current = false;
         }
@@ -225,13 +233,16 @@ export const PokeDetails = () => {
         <Grid container>
             <Grid item xs={12} sm={4}>
                 {selectedImg === null ? pokemon.sprites && <img className={classes.img} src={pokemon.sprites.other['official-artwork']['front_default']} alt={pokemon.name} /> :
-                    <img className={classes.img} src={selectedImg.image} alt={pokemon.name} />
+                    <img onError={(e) => { e.target.onerror = null; e.target.src = NotFound }} className={classes.img} src={selectedImg.image} alt={pokemon.name} />
                 }
                 {selectedImg === null ? <Typography className={classes.caption} variant="body1">{pokemon.name}</Typography> : <Typography className={classes.caption} variant="body1">{selectedImg.name}</Typography>}
                 <Grid container>
                     {forms && forms.map((form, index) => {
                         let gridTotal = Math.floor(12 / forms.length);
-                        return <Grid item key={index} xs={gridTotal}><img onClick={e => setSelectedImg({ image: form.img, name: form.name })} width={forms.length > 2 ? "80%" : (forms.length === 2 ? "40%" : "30%")} className={classes.selectImg} src={form.img} alt={pokemon.name} /></Grid>
+                        if (forms.length > 4) {
+                            gridTotal = 3
+                        }
+                        return <Grid item key={index} xs={gridTotal} style={{ 'marginBottom': '5px' }}><img onError={(e) => { e.target.src = NotFound }} onClick={e => setAthotherVersion(form)} width={forms.length > 2 ? "80%" : (forms.length === 2 ? "40%" : "30%")} className={classes.selectImg} src={form.img} alt={pokemon.name} /></Grid>
                     })}
                 </Grid>
             </Grid>
@@ -382,7 +393,11 @@ export const PokeDetails = () => {
                 <Typography className={classes.typography} variant="h6">Pixel Images</Typography>
                 <div className={classes.listImg}>
                     {pokemon.sprites && pictureNames.map((item, index) => {
-                        return <img className={classes.pixelImg} key={index} src={pokemon.sprites && pokemon.sprites[item]} alt={pokemon.name} />
+                        if(pokemon.sprites && pokemon.sprites[item] !== null){
+                            return <img className={classes.pixelImg} key={index} src={pokemon.sprites && pokemon.sprites[item]} alt={pokemon.name} />
+                        } else {
+                            return null;
+                        }
                     })}
                 </div>
                 <Typography className={classes.typography} variant="h6">Other Language</Typography>

@@ -1,9 +1,8 @@
-import React, { Fragment, useState } from 'react';
+import React, { useState } from 'react';
 import Drawer from '@material-ui/core/Drawer';
 import MuiListItem from '@material-ui/core/ListItem';
 import ListItemIcon from '@material-ui/core/ListItemIcon';
 import ListItemText from '@material-ui/core/ListItemText';
-import Divider from '@material-ui/core/Divider';
 import { useStyles } from './style';
 import { useTheme, withStyles } from '@material-ui/core/styles';
 import Hidden from '@material-ui/core/Hidden';
@@ -13,6 +12,7 @@ import PokeBall from '../../assets/pokeball.svg';
 import NintendoSwitch from '../../assets/nintendo-switch.svg';
 import Trainer from '../../assets/trainer.svg';
 import { useHistory } from 'react-router';
+import { Fragment } from 'react';
 
 const drawerItems = [
     {
