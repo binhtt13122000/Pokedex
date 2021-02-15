@@ -1,6 +1,5 @@
-import React, { useState } from 'react';
+import React, { Fragment, useState } from 'react';
 import Drawer from '@material-ui/core/Drawer';
-import List from '@material-ui/core/List';
 import MuiListItem from '@material-ui/core/ListItem';
 import ListItemIcon from '@material-ui/core/ListItemIcon';
 import ListItemText from '@material-ui/core/ListItemText';
@@ -99,15 +98,15 @@ export const DrawerComponent = (props) => {
     const drawer = (isMobile) => {
         return <div>
             {isMobile ? <img className={classes.logo} src={Logo} width="200px" height="auto" alt="logo" /> : <div className={classes.toolbar} />}
-            <Divider />
-            <List>
+            {/* <Divider /> */}
+            <Fragment>
                 {drawerItems.map((item, index) => (
                     <ListItem button key={index} onClick={e => handleListItemClick(e, item.id, item.to)} selected={selectedIndex === item.id}>
                         <ListItemIcon>{item.icon}</ListItemIcon>
                         <ListItemText primary={item.text} />
                     </ListItem>
                 ))}
-            </List>
+            </Fragment>
         </div>
     }
 

@@ -3,7 +3,7 @@ import Axios from 'axios';
 import React, { useState, useEffect, useRef } from 'react';
 import { TypeChip } from '../../components/TypeChip'
 import { Loading } from '../../components/Loading';
-import { calculatePokemonHightestStat, padLeadingZeros, calculatePokemonLowestStat, getListEvolution, getOrder } from '../../utils/function';
+import { calculatePokemonHightestStat, padLeadingZeros, calculatePokemonLowestStat, getListEvolution, getOrder, calculateCurrentOfMale, calculateCurrentOfFemale } from '../../utils/function';
 import { Fragment } from 'react';
 import Arrow from '../../assets/arrow.png'
 import { useHistory, useLocation } from 'react-router';
@@ -231,7 +231,7 @@ export const PokeDetails = () => {
                 <Grid container>
                     {forms && forms.map((form, index) => {
                         let gridTotal = Math.floor(12 / forms.length);
-                        return <Grid item key={index} xs={gridTotal}><img onClick={e => setSelectedImg({image: form.img, name: form.name})} width={forms.length > 2 ? "80%" : (forms.length === 2 ? "40%" : "30%")} className={classes.selectImg} src={form.img} alt={pokemon.name} /></Grid>
+                        return <Grid item key={index} xs={gridTotal}><img onClick={e => setSelectedImg({ image: form.img, name: form.name })} width={forms.length > 2 ? "80%" : (forms.length === 2 ? "40%" : "30%")} className={classes.selectImg} src={form.img} alt={pokemon.name} /></Grid>
                     })}
                 </Grid>
             </Grid>
@@ -334,12 +334,18 @@ export const PokeDetails = () => {
                                     <th className={classes.th}>Gender</th>
                                     <td className={classes.td}>
                                         {
-                                            pokeDetails['gender_rate'] === -1 ? "No Gender" :
+                                            pokeDetails['gender_rate'] === -1 ? "No Gender" : (pokeDetails['gender_rate'] === 0 ?
                                                 <Fragment>
                                                     <span className={classes.male}>
-                                                        Male: {pokeDetails['gender_rate'] && parseFloat(100 - (pokeDetails['gender_rate'] / 8) * 100)}%</span>, <span className={classes.female}>Female: {pokeDetails['gender_rate'] && parseFloat((pokeDetails['gender_rate'] / 8) * 100)}%
+                                                        Male: 100%</span>, <span className={classes.female}>Female: 0%
+                                                    </span>
+                                                </Fragment> :
+                                                <Fragment>
+                                                    <span className={classes.male}>
+                                                        Male: {pokeDetails['gender_rate'] && calculateCurrentOfMale(pokeDetails['gender_rate'])}%</span>, <span className={classes.female}>Female: {pokeDetails['gender_rate'] && calculateCurrentOfFemale(pokeDetails['gender_rate'])}%
                                                     </span>
                                                 </Fragment>
+                                            )
                                         }
                                     </td>
                                 </tr>

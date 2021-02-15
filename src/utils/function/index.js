@@ -53,3 +53,11 @@ export const getListEvolution = chain => {
     }
     return result;
 }
+
+export const calculateCurrentOfFemale = num => {
+    return parseFloat(parseFloat(num) / 8 * 100);
+}
+
+export const calculateCurrentOfMale = num => {
+    return 100 - calculateCurrentOfFemale(num)
+}
