@@ -9,7 +9,6 @@ import { RouterComponent } from '../../routers';
 const App = ({children}) => {
   //state
   const [mobileOpen, setMobileOpen] = useState(false);
-  const [ search, setSearch ] = useState("");
 
   //variable
   const classes = useStyles();
@@ -18,17 +17,12 @@ const App = ({children}) => {
     setMobileOpen(!mobileOpen);
   };
 
-  const searchChange = e => {
-    console.log(e.target.value)
-    setSearch(e.target.value);
-  }
-
   //render
   return (
     <div className={classes.root}>
       <CssBaseline />
       <header>
-        <Header handleDrawerToggle={handleDrawerToggle} search={search} searchChange={searchChange} />
+        <Header handleDrawerToggle={handleDrawerToggle} />
       </header>
         <DrawerComponent
           mobileOpen={mobileOpen}

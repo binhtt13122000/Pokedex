@@ -1,9 +1,9 @@
 import { Container, Grid, LinearProgress, makeStyles, Paper, Typography, useMediaQuery, withStyles } from '@material-ui/core';
 import Axios from 'axios';
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useRef } from 'react';
 import { TypeChip } from '../../components/TypeChip'
 import { Loading } from '../../components/Loading';
-import { calculatePokemonHightestStat, padLeadingZeros, calculatePokemonLowestStat, getListEvolution } from '../../utils/function';
+import { calculatePokemonHightestStat, padLeadingZeros, calculatePokemonLowestStat, getListEvolution, getOrder } from '../../utils/function';
 import { Fragment } from 'react';
 import Arrow from '../../assets/arrow.png'
 import { useHistory, useLocation } from 'react-router';
@@ -33,10 +33,8 @@ const pictureNames = [
 const useStyles = makeStyles(theme => ({
     img: {
         width: '80%',
-        [theme.breakpoints.down('sm')]: {
-            display: 'block',
-            margin: '0 auto'
-        }
+        display: 'block',
+        margin: '0 auto'
     },
     caption: {
         textAlign: 'center',
@@ -140,6 +138,17 @@ const useStyles = makeStyles(theme => ({
     imgSub: {
         textAlign: 'center',
         fontWeight: '500'
+    },
+    selectImg: {
+        cursor: 'pointer',
+        border: 'solid',
+        borderRadius: '10px',
+        color: theme.palette.primary.main,
+        margin: '0 auto',
+        display: 'block'
+    },
+    active: {
+        color: 'green'
     }
 }))
 export const PokeDetails = () => {
@@ -147,24 +156,42 @@ export const PokeDetails = () => {
     const location = useLocation();
     const [pokemon, setPokemon] = useState({});
     const [pokeDetails, setPokeDetails] = useState({});
+    const [forms, setForms] = useState([]);
     const [evolutionChains, setEvolutionChain] = useState([]);
+    const [selectedImg, setSelectedImg] = useState(null);
     const [loading, setLoading] = useState(false);
     const matches = useMediaQuery('(min-width:600px)');
     const history = useHistory();
+    const mounted = useRef(true);
     const getPokemon = async () => {
         try {
             let name = location.pathname.substring(location.pathname.lastIndexOf("/") + 1)
             setLoading(true);
             const response = await Axios.get('https://pokeapi.co/api/v2/pokemon/' + name);
             if (response.status === 200) {
-                setPokemon(response.data);
+                if (mounted.current) {
+                    setPokemon(response.data);
+                }
                 const responseDetail = await Axios.get(response.data.species.url);
                 if (responseDetail.status === 200) {
-                    setPokeDetails(responseDetail.data);
+                    if (mounted.current) {
+                        setPokeDetails(responseDetail.data);
+                        const forms = responseDetail.data.varieties.map((variety, index) => {
+                            return { img: `https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/other/official-artwork/${getOrder(variety.pokemon.url)}.png`, isDefault: variety['is_default'], name: variety.pokemon.name, id: index }
+                        })
+                        forms.sort((a, b) => {
+                            return a.id - b.id;
+                        })
+                        if (mounted.current) {
+                            setForms(forms)
+                        }
+                    }
                     const evolutionChain = await Axios.get(responseDetail.data['evolution_chain'].url);
                     if (evolutionChain.status === 200) {
                         const evolveArr = getListEvolution(evolutionChain.data.chain);
-                        setEvolutionChain(evolveArr);
+                        if (mounted.current) {
+                            setEvolutionChain(evolveArr);
+                        }
                     }
                 }
             }
@@ -172,12 +199,18 @@ export const PokeDetails = () => {
             console.log(ex)
             history.push('/not_found')
         } finally {
-            setLoading(false)
+            if (mounted.current) {
+                setLoading(false)
+            }
         }
     }
 
     useEffect(() => {
-        getPokemon();
+        mounted.current = true;
+        getPokemon(mounted);
+        return () => {
+            mounted.current = false;
+        }
     }, [])
 
 
@@ -191,7 +224,16 @@ export const PokeDetails = () => {
         <Typography variant="h4" className={classes.caption}>{pokemon.name && pokemon.name.toUpperCase()} #{pokemon.id}</Typography>
         <Grid container>
             <Grid item xs={12} sm={4}>
-                {pokemon.sprites !== undefined ? <img className={classes.img} src={pokemon.sprites.other['official-artwork']['front_default']} alt={pokemon.name} /> : null}
+                {selectedImg === null ? pokemon.sprites && <img className={classes.img} src={pokemon.sprites.other['official-artwork']['front_default']} alt={pokemon.name} /> :
+                    <img className={classes.img} src={selectedImg.image} alt={pokemon.name} />
+                }
+                {selectedImg === null ? <Typography className={classes.caption} variant="body1">{pokemon.name}</Typography> : <Typography className={classes.caption} variant="body1">{selectedImg.name}</Typography>}
+                <Grid container>
+                    {forms && forms.map((form, index) => {
+                        let gridTotal = Math.floor(12 / forms.length);
+                        return <Grid item key={index} xs={gridTotal}><img onClick={e => setSelectedImg({image: form.img, name: form.name})} width={forms.length > 2 ? "80%" : (forms.length === 2 ? "40%" : "30%")} className={classes.selectImg} src={form.img} alt={pokemon.name} /></Grid>
+                    })}
+                </Grid>
             </Grid>
             <Grid item xs={12} sm={4}>
                 <Paper elevation={3} className={classes.pokedexContainer}>
@@ -290,7 +332,16 @@ export const PokeDetails = () => {
                                 </tr>
                                 <tr>
                                     <th className={classes.th}>Gender</th>
-                                    <td className={classes.td}><span className={classes.male}>Male: {pokeDetails['gender_rate'] && parseFloat(100 - (pokeDetails['gender_rate'] / 8) * 100)}%</span>, <span className={classes.female}>Female: {pokeDetails['gender_rate'] && parseFloat((pokeDetails['gender_rate'] / 8) * 100)}%</span></td>
+                                    <td className={classes.td}>
+                                        {
+                                            pokeDetails['gender_rate'] === -1 ? "No Gender" :
+                                                <Fragment>
+                                                    <span className={classes.male}>
+                                                        Male: {pokeDetails['gender_rate'] && parseFloat(100 - (pokeDetails['gender_rate'] / 8) * 100)}%</span>, <span className={classes.female}>Female: {pokeDetails['gender_rate'] && parseFloat((pokeDetails['gender_rate'] / 8) * 100)}%
+                                                    </span>
+                                                </Fragment>
+                                        }
+                                    </td>
                                 </tr>
                                 <tr>
                                     <th className={classes.th}>Egg Circle</th>

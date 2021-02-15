@@ -1,5 +1,5 @@
 import { Grid } from '@material-ui/core';
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useRef, useState } from 'react';
 import { Loading } from '../../components/Loading';
 import { CustomPagination } from '../../components/Pagination';
 import { PokeCard } from '../../components/PokeCard';
@@ -15,14 +15,17 @@ export const PokeLib = () => {
     })
     const [total, setTotal] = useState(0);
     const [loading, setLoading] = useState(false);
+    const mounted = useRef(true);
 
     const fetchPokemon = async (pageIndex) => {
         try {
             setLoading(true);
             const response = await PokeApi.getPokemon(LIMIT * pageIndex);
             if (response.status === 200) {
-                setTotal(response.data.count);
-                setPage({ ...page, next: response.data.next, previous: response.data.previous, current: pageIndex + 1 })
+                if(mounted.current){
+                    setTotal(response.data.count);
+                    setPage({ ...page, next: response.data.next, previous: response.data.previous, current: pageIndex + 1 })
+                }
                 const pokePromises = response.data.results.map(async function (pokeItem) {
                     return await PokeApi.getPokemonByName(pokeItem.name);
                 })
@@ -36,11 +39,16 @@ export const PokeLib = () => {
                         return { name: pokeData.name, image: pokeData.sprites.other['official-artwork']['front_default'] , height: pokeData.height, weight: pokeData.weight, order: pokeData.id, types: types }
                     }
                 });
-                setPokemonList(pokemons)
-                setLoading(false);
+                if(mounted.current){
+                    setPokemonList(pokemons)
+                }
             }
         } catch (ex) {
-            setLoading(false);
+            console.log(ex)
+        } finally {
+            if(mounted.current){
+                setLoading(false);
+            }
         }
     }
 
@@ -53,7 +61,11 @@ export const PokeLib = () => {
 
     useEffect(() => {
         let pageIndex = parseInt(sessionStorage.getItem('page')) || 0;
+        mounted.current = true;
         fetchPokemon(pageIndex);
+        return () => {
+            mounted.current = false;
+        }
     }, []);
 
     if (loading) {

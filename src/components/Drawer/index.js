@@ -1,12 +1,12 @@
 import React, { useState } from 'react';
 import Drawer from '@material-ui/core/Drawer';
 import List from '@material-ui/core/List';
-import ListItem from '@material-ui/core/ListItem';
+import MuiListItem from '@material-ui/core/ListItem';
 import ListItemIcon from '@material-ui/core/ListItemIcon';
 import ListItemText from '@material-ui/core/ListItemText';
 import Divider from '@material-ui/core/Divider';
 import { useStyles } from './style';
-import { useTheme } from '@material-ui/core/styles';
+import { useTheme, withStyles } from '@material-ui/core/styles';
 import Hidden from '@material-ui/core/Hidden';
 import Logo from '../../assets/logo.png';
 import NotificationsActiveIcon from '@material-ui/icons/NotificationsActive';
@@ -18,38 +18,30 @@ import { useHistory } from 'react-router';
 const drawerItems = [
     {
         id: 1,
-        text: "Pokedex",
+        text: "PokeLib",
         icon: <img src={PokeBall} alt="pokedex" width="30px" height="30px" />,
         to: '/',
-        children: [
-            {
-                id: "Kanto",
-                text: "Kanto",
-                icon: <NotificationsActiveIcon />,
-                to: '/kanto/pokedex',
-            },
-            {
-                id: "Johto",
-                text: "Johto",
-                icon: <NotificationsActiveIcon />,
-                to: '/johto/pokedex',
-            }
-        ]
     },
     {
         id: 2,
+        text: "Region",
+        icon: <img src={PokeBall} alt="pokedex" width="30px" height="30px" />,
+        to: '/region'
+    },
+    {
+        id: 3,
         text: "Abilities",
         icon: <img src={Trainer} alt="pokedex" width="30px" height="30px" />,
         to: '/abilities'
     },
     {
-        id: 3,
+        id: 4,
         text: "Types",
         icon: <NotificationsActiveIcon />,
         to: '/types'
     },
     {
-        id: 4,
+        id: 5,
         text: "Games",
         icon: <img src={NintendoSwitch} alt="pokedex" width="30px" height="30px" />,
         to: '/games',
@@ -70,12 +62,31 @@ const drawerItems = [
     },
 ]
 
+const ListItem = withStyles((theme) => ({
+    root: {
+        "&$selected": {
+            backgroundColor: theme.palette.primary.main,
+            color: theme.palette.common.white
+        },
+        "&$selected:hover": {
+            backgroundColor: theme.palette.primary.main,
+            color: theme.palette.common.white
+        },
+        "&:hover": {
+            backgroundColor: theme.palette.primary.main,
+            color: theme.palette.common.white
+        }
+    },
+    selected: {},
+}))(MuiListItem);
+
 export const DrawerComponent = (props) => {
-    const [selectedIndex, setSelectedIndex] = useState(1);
+    const [selectedIndex, setSelectedIndex] = useState(parseInt(sessionStorage.getItem("item")) || 1);
     const history = useHistory();
     const handleListItemClick = (event, index, path) => {
+        sessionStorage.setItem("item", index);
         setSelectedIndex(index);
-        if(path){
+        if (path) {
             history.push(path)
         }
     };
