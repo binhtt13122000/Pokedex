@@ -3,6 +3,7 @@ import { Switch, BrowserRouter } from 'react-router-dom';
 import { Route } from 'react-router'
 import { PokeDetails } from '../containers/PokeDetails';
 import { PokeLib } from '../containers/PokeLib';
+import { NotFound } from '../containers/NotFound';
 
 export const PublicRoute = ({ component: Component, ...rest }) => {
     return <Route {...rest} render={
@@ -19,6 +20,11 @@ const routes = [
         path: "/pokemon/:name",
         name: "pokemon",
         component: PokeDetails
+    }, 
+    {
+        path: "/not_found",
+        name: "Not Found",
+        component: NotFound
     }
 ]
 export const RouterComponent = () => {

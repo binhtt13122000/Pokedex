@@ -6,7 +6,7 @@ import { Loading } from '../../components/Loading';
 import { calculatePokemonHightestStat, padLeadingZeros, calculatePokemonLowestStat, getListEvolution } from '../../utils/function';
 import { Fragment } from 'react';
 import Arrow from '../../assets/arrow.png'
-import { useLocation } from 'react-router';
+import { useHistory, useLocation } from 'react-router';
 
 
 const BorderLinearProgress = withStyles((theme) => ({
@@ -149,9 +149,8 @@ export const PokeDetails = () => {
     const [pokeDetails, setPokeDetails] = useState({});
     const [evolutionChains, setEvolutionChain] = useState([]);
     const [loading, setLoading] = useState(false);
-
     const matches = useMediaQuery('(min-width:600px)');
-
+    const history = useHistory();
     const getPokemon = async () => {
         try {
             let name = location.pathname.substring(location.pathname.lastIndexOf("/") + 1)
@@ -171,6 +170,7 @@ export const PokeDetails = () => {
             }
         } catch (ex) {
             console.log(ex)
+            history.push('/not_found')
         } finally {
             setLoading(false)
         }
