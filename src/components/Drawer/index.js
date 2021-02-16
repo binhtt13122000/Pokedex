@@ -17,15 +17,15 @@ import { Fragment } from 'react';
 const drawerItems = [
     {
         id: 1,
-        text: "PokeLib",
+        text: "Pokedex",
         icon: <img src={PokeBall} alt="pokedex" width="30px" height="30px" />,
         to: '/',
     },
     {
         id: 2,
-        text: "Region",
+        text: "Regions",
         icon: <img src={PokeBall} alt="pokedex" width="30px" height="30px" />,
-        to: '/region'
+        to: '/regions/kanto'
     },
     {
         id: 3,
