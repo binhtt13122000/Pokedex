@@ -5,7 +5,7 @@ import ReplaceImg from '../../assets/whothatpokemon.png'
 import { useHistory } from 'react-router';
 const useStyles = makeStyles(theme => ({
     card: {
-        width: '330px',
+        width: '100%',
         minHeight: 200,
         margin: '0 auto',
         marginBottom: '20px',
