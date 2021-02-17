@@ -1,4 +1,4 @@
-import React, { useEffect, useLayoutEffect, useState } from 'react';
+import React, { useLayoutEffect, useState } from 'react';
 import Drawer from '@material-ui/core/Drawer';
 import MuiListItem from '@material-ui/core/ListItem';
 import ListItemIcon from '@material-ui/core/ListItemIcon';
@@ -17,7 +17,7 @@ import Axios from 'axios';
 import ExpandLess from "@material-ui/icons/ExpandLess";
 import ExpandMore from "@material-ui/icons/ExpandMore";
 import { List, Collapse } from '@material-ui/core';
-import { regions } from '../../assets/data';
+// import { regions } from '../../assets/data';
 
 const drawerItems = [
     {
@@ -113,7 +113,6 @@ export const DrawerComponent = (props) => {
                         }
                     })
                     drawerItems[1].children = routers;
-                    console.log(drawerItems)
                 }
             } catch (e) {
                 console.log(e);

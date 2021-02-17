@@ -5,6 +5,7 @@ import { useStyles } from './style';
 import CssBaseline from '@material-ui/core/CssBaseline';
 import { RouterComponent } from '../../routers';
 import Axios from 'axios';
+import { Loading } from '../../components/Loading';
 
 const App = () => {
   //state
@@ -17,7 +18,6 @@ const App = () => {
         setLoading(true)
         const response = await Axios.get("https://pokeapi.co/api/v2/pokedex/1");
         if(response.status === 200){
-          console.log(response.data['pokemon_entries'].length);
           sessionStorage.setItem("total", response.data['pokemon_entries'].length);
         }
       } catch(ex){
@@ -36,7 +36,11 @@ const App = () => {
     setMobileOpen(!mobileOpen);
   };
 
+  
   //render
+  if(loading){
+    return <Loading />
+  }
   return (
     <div className={classes.root}>
       <CssBaseline />
