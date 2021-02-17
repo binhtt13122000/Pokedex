@@ -5,6 +5,7 @@ import { PokeDetails } from '../containers/PokeDetails';
 import { PokeLib } from '../containers/PokeLib';
 import { Region } from '../containers/Region';
 import { NotFound } from '../containers/NotFound';
+import { AbilityPage } from '../containers/AbilityPage';
 export const PublicRoute = ({ component: Component, ...rest }) => {
     return <Route {...rest} render={
         props => {
@@ -30,9 +31,9 @@ const routes = [
         component: NotFound
     },
     {
-        path: '/ability',
-        name: "Not Found",
-        component: NotFound
+        path: '/abilities',
+        name: "Abilities",
+        component: AbilityPage
     },
     {
         path: "/",
