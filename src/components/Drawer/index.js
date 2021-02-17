@@ -17,6 +17,7 @@ import Axios from 'axios';
 import ExpandLess from "@material-ui/icons/ExpandLess";
 import ExpandMore from "@material-ui/icons/ExpandMore";
 import { List, Collapse } from '@material-ui/core';
+import { regions } from '../../assets/data';
 
 const drawerItems = [
     {
@@ -29,6 +30,15 @@ const drawerItems = [
         id: 2,
         text: "Regions",
         icon: <img src={PokeBall} alt="pokedex" width="30px" height="30px" />,
+        children: [
+            regions.map((item, index) => {
+                return {
+                    id: index + 5,
+                    to: `/regions/${item.name}`,
+                    text: item.name.charAt(0).toUpperCase() + item.name.substring(1) 
+                }
+            })
+        ]
     },
     {
         id: 3,
@@ -97,7 +107,7 @@ export const DrawerComponent = (props) => {
                     const routers = response.data.results.map((item, index) => {
                         return {
                             id: (index + 1 + drawerItems.length),
-                            text: item.name,
+                            text: item.name.charAt(0).toUpperCase() + item.name.substring(1) ,
                             to: `/regions/${item.name}`
                         }
                     })
