@@ -11,22 +11,6 @@ const App = () => {
   const [mobileOpen, setMobileOpen] = useState(false);
   const [loading, setLoading] = useState(false);
 
-  // const [regions, setRegions] = useState([]);
-  
-  // useEffect(() => {
-  //   const getRegions = async () => {
-  //     const response = await Axios.get("https://pokeapi.co/api/v2/region");
-  //     if(response.status === 200){
-  //       const promises = response.data.results.map(async function(item){
-  //         return await Axios.get(item.url);
-  //       })
-  //       const listRegionResponse = await Promise.all(promises);
-  //       console.log(listRegionResponse)
-  //     }
-  //   } 
-  //   getRegions();
-  // }, [])
-
   useLayoutEffect(() => {
     const getNationPokedexTotal = async () => {
       try {

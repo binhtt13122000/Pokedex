@@ -64,7 +64,10 @@ const useStyles = makeStyles((theme) => ({
     banner: {
         display: 'block',
         margin: '0 auto',
-        borderRadius: '10px'
+        borderRadius: '10px',
+    },
+    pokeBox: {
+        cursor: 'pointer'
     },
     paper: {
         paddingTop: '15px',
@@ -192,12 +195,15 @@ export const Region = () => {
             }
         }
     }
+
     useEffect(() => {
-        let region = location.pathname.substring(location.pathname.lastIndexOf("/") + 1);
+        console.log("a")
+        const region = location.pathname.substring(location.pathname.lastIndexOf("/") + 1);
         mounted.current = true;
         getRegion(region);
         return () => { mounted.current = false }
     }, [])
+
 
     const setPokedexHandler = async (name) => {
         try {
@@ -295,7 +301,7 @@ export const Region = () => {
         <Typography variant="h6"># List Pokemons - (Pokedex: {selectedPokedex.name})</Typography>
         <Grid container>
             {selectedPokedex.listPoke && selectedPokedex.listPoke.map((poke, index) => {
-                return <Grid item xs={4} md={2} key={index}>
+                return <Grid item xs={4} md={2} key={index} className={classes.pokeBox} onClick={e => history.push("/pokemon/" + poke.name)}>
                     <img className={classes.banner} src={poke.img} />
                     <p style={{ 'textAlign': 'center' }}>{poke.name}</p>
                 </Grid>

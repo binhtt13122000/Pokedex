@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useEffect, useLayoutEffect, useState } from 'react';
 import Drawer from '@material-ui/core/Drawer';
 import MuiListItem from '@material-ui/core/ListItem';
 import ListItemIcon from '@material-ui/core/ListItemIcon';
@@ -13,6 +13,10 @@ import NintendoSwitch from '../../assets/nintendo-switch.svg';
 import Trainer from '../../assets/trainer.svg';
 import { useHistory } from 'react-router';
 import { Fragment } from 'react';
+import Axios from 'axios';
+import ExpandLess from "@material-ui/icons/ExpandLess";
+import ExpandMore from "@material-ui/icons/ExpandMore";
+import { List, Collapse } from '@material-ui/core';
 
 const drawerItems = [
     {
@@ -25,7 +29,6 @@ const drawerItems = [
         id: 2,
         text: "Regions",
         icon: <img src={PokeBall} alt="pokedex" width="30px" height="30px" />,
-        to: '/regions/kanto'
     },
     {
         id: 3,
@@ -80,13 +83,45 @@ const ListItem = withStyles((theme) => ({
 }))(MuiListItem);
 
 export const DrawerComponent = (props) => {
+
     const [selectedIndex, setSelectedIndex] = useState(parseInt(sessionStorage.getItem("item")) || 1);
+    const [open, setOpen] = useState(false);
+
     const history = useHistory();
-    const handleListItemClick = (event, index, path) => {
-        sessionStorage.setItem("item", index);
+
+    useLayoutEffect(() => {
+        const getRegions = async () => {
+            try {
+                const response = await Axios.get("https://pokeapi.co/api/v2/region");
+                if (response.status === 200) {
+                    const routers = response.data.results.map((item, index) => {
+                        return {
+                            id: (index + 1 + drawerItems.length),
+                            text: item.name,
+                            to: `/regions/${item.name}`
+                        }
+                    })
+                    drawerItems[1].children = routers;
+                    console.log(drawerItems)
+                }
+            } catch (e) {
+                console.log(e);
+            }
+        }
+        getRegions();
+    }, [])
+
+    //function
+    const handleListItemClick = (event, index, path, hasChildren, fatherIndex) => {
+        sessionStorage.setItem("item", fatherIndex);
         setSelectedIndex(index);
         if (path) {
             history.push(path)
+            setOpen(false)
+            setSelectedIndex(fatherIndex)
+        }
+        if(hasChildren){
+            setOpen(!open)
         }
     };
     //const
@@ -101,10 +136,29 @@ export const DrawerComponent = (props) => {
             {/* <Divider /> */}
             <Fragment>
                 {drawerItems.map((item, index) => (
-                    <ListItem button key={index} onClick={e => handleListItemClick(e, item.id, item.to)} selected={selectedIndex === item.id}>
-                        <ListItemIcon>{item.icon}</ListItemIcon>
-                        <ListItemText primary={item.text} />
-                    </ListItem>
+                    <Fragment key={index}>
+                        <ListItem button onClick={e => handleListItemClick(e, item.id, item.to, item.children, item.id)} selected={selectedIndex === item.id}>
+                            <ListItemIcon>{item.icon}</ListItemIcon>
+                            <ListItemText primary={item.text} />
+                            {item.children ? (open ? <ExpandLess /> : <ExpandMore />) : null}
+                        </ListItem>
+                        {item.children ? <Collapse in={open} timeout="auto" unmountOnExit>
+                            <List component="div" disablePadding>
+                                {item.children.map((itemChildren) => {
+                                    return (<ListItem
+                                        button
+                                        className={classes.nested}
+                                        selected={selectedIndex === itemChildren.id}
+                                        onClick={e => handleListItemClick(e, itemChildren.id, itemChildren.to, itemChildren.children, item.id)}
+                                        key={itemChildren.id}
+                                    >
+                                        <ListItemIcon>{itemChildren.icon}</ListItemIcon>
+                                        <ListItemText primary={itemChildren.text} />
+                                    </ListItem>)
+                                })}
+                            </List>
+                        </Collapse> : null}
+                    </Fragment>
                 ))}
             </Fragment>
         </div>

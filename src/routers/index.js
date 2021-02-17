@@ -7,15 +7,13 @@ import { Region } from '../containers/Region';
 import { NotFound } from '../containers/NotFound';
 export const PublicRoute = ({ component: Component, ...rest }) => {
     return <Route {...rest} render={
-        props => <Component {...props} />} />
+        props => {
+            return <Component {...props} key={window.location.pathname} />
+        }}
+    />
 }
 
 const routes = [
-    {
-        path: "/",
-        name: "pokedex",
-        component: PokeLib
-    },
     {
         path: "/regions/:name",
         name: "region",
@@ -35,13 +33,26 @@ const routes = [
         path: '/ability',
         name: "Not Found",
         component: NotFound
-    }
+    },
+    {
+        path: "/",
+        name: "pokedex",
+        exact: true,
+        component: PokeLib
+    },
 ]
 export const RouterComponent = () => {
     return <Switch>
         {routes.map((route, index) => {
+            if (route.exact) {
+                return <PublicRoute key={index}
+                    exact
+                    path={route.path}
+                    component={route.component}
+                />
+            }
             return <PublicRoute key={index}
-                exact={true}
+                // exact={route.exact}
                 path={route.path}
                 component={route.component}
             />
