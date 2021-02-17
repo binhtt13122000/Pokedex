@@ -31,13 +31,14 @@ const drawerItems = [
         text: "Regions",
         icon: <img src={PokeBall} alt="pokedex" width="30px" height="30px" />,
         children: [
-            regions.map((item, index) => {
-                return {
-                    id: index + 5,
-                    to: `/regions/${item.name}`,
-                    text: item.name.charAt(0).toUpperCase() + item.name.substring(1) 
-                }
-            })
+            // regions.map((item, index) => {
+            //     console.log(index + 6)
+            //     return {
+            //         id: parseInt(index + 6),
+            //         to: `/regions/${item.name}`,
+            //         text: item.name.charAt(0).toUpperCase() + item.name.substring(1) 
+            //     }
+            // })
         ]
     },
     {
