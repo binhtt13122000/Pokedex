@@ -6,6 +6,8 @@ import { PokeLib } from '../containers/PokeLib';
 import { Region } from '../containers/Region';
 import { NotFound } from '../containers/NotFound';
 import { AbilityPage } from '../containers/AbilityPage';
+import { TypePage } from '../containers/TypePage';
+import { TypeDetails } from '../containers/TypeDetails';
 export const PublicRoute = ({ component: Component, ...rest }) => {
     return <Route {...rest} render={
         props => {
@@ -34,6 +36,16 @@ const routes = [
         path: '/abilities',
         name: "Abilities",
         component: AbilityPage
+    },
+    {
+        path: "/types/:name",
+        name: "TypesDetails",
+        component: TypeDetails
+    },
+    {
+        path: "/types",
+        name: "Types",
+        component: TypePage
     },
     {
         path: "/",

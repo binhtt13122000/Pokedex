@@ -117,7 +117,9 @@ export const Region = () => {
     const history = useHistory();
     const getRegion = async (region) => {
         try {
-            setLoading(true);
+            if(mounted.current){
+                setLoading(true);
+            }
             const response = await Axios.get("https://pokeapi.co/api/v2/region/" + region);
             if (response.status === 200) {
                 if (mounted.current) {
@@ -135,7 +137,9 @@ export const Region = () => {
                             img: `https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/${getOrder(entry['pokemon_species'].url)}.png`
                         }
                     });
-                    setSelectedPokedex({ ...selectedPokedex, listPoke: pokes });
+                    if(mounted.current){
+                        setSelectedPokedex({ ...selectedPokedex, listPoke: pokes });
+                    }
                 }
             }
         } catch (ex) {
@@ -148,7 +152,6 @@ export const Region = () => {
     }
 
     useEffect(() => {
-        console.log("a")
         const region = location.pathname.substring(location.pathname.lastIndexOf("/") + 1);
         mounted.current = true;
         getRegion(region);
@@ -255,7 +258,7 @@ export const Region = () => {
         <Typography variant="h6"># List Pokemons - (Pokedex: {selectedPokedex.name})</Typography>
         <Grid container>
             {selectedPokedex.listPoke && selectedPokedex.listPoke.map((poke, index) => {
-                return <Grid item xs={4} md={2} key={index} className={classes.pokeBox} onClick={e => history.push("/pokemon/" + poke.name)}>
+                return <Grid item xs={6} md={2} key={index} className={classes.pokeBox} onClick={e => history.push("/pokemon/" + poke.name)}>
                     <img className={classes.banner} src={poke.img} />
                     <p style={{ 'textAlign': 'center' }}>{poke.name}</p>
                 </Grid>
