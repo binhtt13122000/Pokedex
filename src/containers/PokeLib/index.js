@@ -1,5 +1,7 @@
 import { Grid } from '@material-ui/core';
-import React, { useEffect, useState } from 'react';
+import Axios from 'axios';
+import React, { useEffect, useRef, useState } from 'react';
+import { useHistory, useLocation } from 'react-router';
 import { Loading } from '../../components/Loading';
 import { CustomPagination } from '../../components/Pagination';
 import { PokeCard } from '../../components/PokeCard';
@@ -15,14 +17,23 @@ export const PokeLib = () => {
     })
     const [total, setTotal] = useState(0);
     const [loading, setLoading] = useState(false);
+    const mounted = useRef(true);
+    const location = useLocation();
+    const history = useHistory();
 
-    const fetchPokemon = async (pageIndex) => {
+    const fetchPokemon = async (pageIndex, dexTotal) => {
         try {
             setLoading(true);
-            const response = await PokeApi.getPokemon(LIMIT * pageIndex);
+            let limit = LIMIT;
+            if (LIMIT * (pageIndex + 1) > dexTotal) {
+                limit = dexTotal - (pageIndex) * LIMIT;
+            }
+            const response = await Axios.get(`https://pokeapi.co/api/v2/pokemon?offset=${LIMIT * pageIndex}&limit=${limit}`)
             if (response.status === 200) {
-                setTotal(response.data.count);
-                setPage({ ...page, next: response.data.next, previous: response.data.previous, current: pageIndex + 1 })
+                if (mounted.current) {
+                    setTotal(dexTotal || response.data.count);
+                    setPage({ ...page, next: response.data.next, previous: response.data.previous, current: pageIndex + 1 })
+                }
                 const pokePromises = response.data.results.map(async function (pokeItem) {
                     return await PokeApi.getPokemonByName(pokeItem.name);
                 })
@@ -33,27 +44,42 @@ export const PokeLib = () => {
                         let types = pokeData.types.map(item => {
                             return item.type.name
                         })
-                        return { name: pokeData.name, image: pokeData.sprites.other['official-artwork']['front_default'] , height: pokeData.height, weight: pokeData.weight, order: pokeData.id, types: types }
+                        return { name: pokeData.name, image: pokeData.sprites.other['official-artwork']['front_default'], height: pokeData.height, weight: pokeData.weight, order: pokeData.id, types: types }
                     }
                 });
-                setPokemonList(pokemons)
-                setLoading(false);
+                if (mounted.current) {
+                    setPokemonList(pokemons)
+                }
             }
         } catch (ex) {
-            setLoading(false);
+            console.log(ex)
+        } finally {
+            if (mounted.current) {
+                setLoading(false);
+            }
         }
     }
 
     const changePage = (e, value) => {
-        sessionStorage.setItem('page', value - 1)
-        fetchPokemon(value - 1)
-        console.log(page)
+        const nationDexTotal = parseInt(sessionStorage.getItem("total"));
+        history.push("/?page=" + value);
+        fetchPokemon(value - 1, nationDexTotal)
     }
 
 
     useEffect(() => {
-        let pageIndex = parseInt(sessionStorage.getItem('page')) || 0;
-        fetchPokemon(pageIndex);
+        let params = new URLSearchParams(location.search);
+        let search = params.get("page");
+        if(search == null){
+            search = 1;
+        }
+        let pageIndex = parseInt(parseInt(search) - 1);
+        const nationDexTotal = parseInt(sessionStorage.getItem("total"));
+        mounted.current = true;
+        fetchPokemon(pageIndex, nationDexTotal);
+        return () => {
+            mounted.current = false;
+        }
     }, []);
 
     if (loading) {

@@ -1,8 +1,9 @@
 import { Chip, makeStyles } from '@material-ui/core';
 import React from 'react';
+import { useHistory } from 'react-router';
 
 
-export const TypeChip = ({type}) => {
+export const TypeChip = ({ type }) => {
     const useStyles = makeStyles(theme => ({
         unknown: {
             backgroundColor: '#000000'
@@ -61,7 +62,11 @@ export const TypeChip = ({type}) => {
         fairy: {
             backgroundColor: '#ee99ee'
         },
+        shadow: {
+            backgroundColor: '#000000'
+        },
         size: {
+
         },
         textDecoration: {
             color: 'white',
@@ -72,6 +77,12 @@ export const TypeChip = ({type}) => {
     }))
 
     const classes = useStyles();
+    const history = useHistory();
 
-    return <Chip size="small" label={type.toUpperCase()} component="a" className={`${classes.size} ${classes[type]} ${classes.textDecoration} ${classes.unknown}`} />
+    return <Chip size="small"
+        onClick={e => history.push("/types/" + type)}
+        label={type.toUpperCase()}
+        component="a"
+        className={`${classes.size} ${classes[type]} ${classes.textDecoration} ${classes.unknown}`}
+    />
 }

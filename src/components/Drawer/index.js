@@ -1,93 +1,98 @@
-import React from 'react';
-import Drawer from '@material-ui/core/Drawer';
-import List from '@material-ui/core/List';
-import ListItem from '@material-ui/core/ListItem';
-import ListItemIcon from '@material-ui/core/ListItemIcon';
-import ListItemText from '@material-ui/core/ListItemText';
-import Divider from '@material-ui/core/Divider';
-import { useStyles } from './style';
-import { useTheme } from '@material-ui/core/styles';
-import Hidden from '@material-ui/core/Hidden';
-import Logo from '../../assets/logo.png';
-import NotificationsActiveIcon from '@material-ui/icons/NotificationsActive';
-import PokeBall from '../../assets/pokeball.svg';
-import NintendoSwitch from '../../assets/nintendo-switch.svg';
-import Trainer from '../../assets/trainer.svg';
+import React, { useLayoutEffect, useState, Fragment } from 'react';
 
-const drawerItems = [
-    {
-        id: 1,
-        text: "Pokedex",
-        icon: <img src={PokeBall} alt="pokedex" width="30px" height="30px" />,
-        to: '/pokedex',
-        children: [
-            {
-                id: "Kanto",
-                text: "Kanto",
-                icon: <NotificationsActiveIcon />,
-                to: '/kanto/pokedex',
-            },
-            {
-                id: "Johto",
-                text: "Johto",
-                icon: <NotificationsActiveIcon />,
-                to: '/johto/pokedex',
-            }
-        ]
-    },
-    {
-        id: 2,
-        text: "Abilities",
-        icon: <img src={Trainer} alt="pokedex" width="30px" height="30px" />,
-        to: '/abilities'
-    },
-    {
-        id: 3,
-        text: "Types",
-        icon: <NotificationsActiveIcon />,
-        to: '/types'
-    },
-    {
-        id: 4,
-        text: "Games",
-        icon: <img src={NintendoSwitch} alt="pokedex" width="30px" height="30px" />,
-        to: '/games',
-        children: [
-            {
-                id: "GenI",
-                text: "Gen I",
-                icon: <NotificationsActiveIcon />,
-                to: '/generation1/pokedex',
-            },
-            {
-                id: "GenII",
-                text: "GenII",
-                icon: <NotificationsActiveIcon />,
-                to: '/generation2/pokedex',
-            }
-        ]
-    },
-]
+import { ListItem, useStyles } from './style';
+
+import { useTheme,List, Collapse, Drawer, ListItemIcon, ListItemText, Hidden } from '@material-ui/core';
+import ExpandLess from "@material-ui/icons/ExpandLess";
+import ExpandMore from "@material-ui/icons/ExpandMore";
+import Logo from '../../assets/logo.png';
+
+import { useHistory } from 'react-router';
+
+import Axios from 'axios';
+
+import { drawerItems } from './data';
+import { POKE_ROOT_API } from '../../constants/poke';
 
 export const DrawerComponent = (props) => {
-    //const
+    //state
+    const [selectedIndex, setSelectedIndex] = useState(parseInt(sessionStorage.getItem("item")) || 1);
+    const [open, setOpen] = useState(false);
+
+    //variable
+    const history = useHistory();
     const { mobileOpen, handleDrawerToggle, window } = props;
     const container = window !== undefined ? () => window().document.body : undefined;
     const classes = useStyles();
     const theme = useTheme();
+
+    //useEffect
+    useLayoutEffect(() => {
+        const getRegions = async () => {
+            try {
+                const response = await Axios.get(`${POKE_ROOT_API}/region`);
+                if (response.status === 200) {
+                    const routers = response.data.results.map((item, index) => {
+                        return {
+                            id: (index + 1 + drawerItems.length),
+                            text: item.name.charAt(0).toUpperCase() + item.name.substring(1) ,
+                            to: `/regions/${item.name}`
+                        }
+                    })
+                    drawerItems[1].children = routers;
+                }
+            } catch (e) {
+                console.log(e);
+            }
+        }
+        getRegions();
+    }, [])
+
+    //function
+    const handleListItemClick = (event, index, path, hasChildren, fatherIndex) => {
+        sessionStorage.setItem("item", fatherIndex);
+        setSelectedIndex(index);
+        if (path) {
+            history.push(path)
+            setOpen(false)
+            setSelectedIndex(fatherIndex)
+        }
+        if(hasChildren){
+            setOpen(!open)
+        }
+    };
+
     //reused component
     const drawer = (isMobile) => {
         return <div>
             {isMobile ? <img className={classes.logo} src={Logo} width="200px" height="auto" alt="logo" /> : <div className={classes.toolbar} />}
-            <Divider />
-            <List>
+            <Fragment>
                 {drawerItems.map((item, index) => (
-                    <ListItem button key={index}>
-                        <ListItemIcon>{item.icon}</ListItemIcon>
-                        <ListItemText primary={item.text} />
-                    </ListItem>
+                    <Fragment key={index}>
+                        <ListItem button onClick={e => handleListItemClick(e, item.id, item.to, item.children, item.id)} selected={selectedIndex === item.id}>
+                            <ListItemIcon>{item.icon}</ListItemIcon>
+                            <ListItemText primary={item.text} />
+                            {item.children ? (open ? <ExpandLess /> : <ExpandMore />) : null}
+                        </ListItem>
+                        {item.children ? <Collapse in={open} timeout="auto" unmountOnExit>
+                            <List component="div" disablePadding>
+                                {item.children.map((itemChildren) => {
+                                    return (<ListItem
+                                        button
+                                        className={classes.nested}
+                                        selected={selectedIndex === itemChildren.id}
+                                        onClick={e => handleListItemClick(e, itemChildren.id, itemChildren.to, itemChildren.children, item.id)}
+                                        key={itemChildren.id}
+                                    >
+                                        <ListItemIcon>{itemChildren.icon}</ListItemIcon>
+                                        <ListItemText primary={itemChildren.text} />
+                                    </ListItem>)
+                                })}
+                            </List>
+                        </Collapse> : null}
+                    </Fragment>
                 ))}
-            </List>
+            </Fragment>
         </div>
     }
 

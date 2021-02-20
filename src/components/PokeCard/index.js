@@ -2,10 +2,11 @@ import { Grid, Card, makeStyles, Typography } from '@material-ui/core';
 import React, { useState } from 'react';
 import { TypeChip } from '../TypeChip';
 import ReplaceImg from '../../assets/whothatpokemon.png'
+import { useHistory } from 'react-router';
 const useStyles = makeStyles(theme => ({
     card: {
-        width: '330px',
-        height: 200,
+        width: '100%',
+        minHeight: 200,
         margin: '0 auto',
         marginBottom: '20px',
         paddingTop: '10px',
@@ -38,6 +39,8 @@ const useStyles = makeStyles(theme => ({
 
 export const PokeCard = (props) => {
     const { height, weight, types, order, image, name } = props.pokemon;
+    const history = useHistory();
+
 
     const [ imgSrc, setImgSrc ] = useState({
         src: image || ReplaceImg,
@@ -45,9 +48,9 @@ export const PokeCard = (props) => {
     })
 
     const showDetail = (e, name) => {
-
+        history.push('/pokemon/' + name)
     }
-    
+
     const classes = useStyles();
     return <Card className={classes.card} onClick={e => showDetail(e, name)}>
         <Grid container>
