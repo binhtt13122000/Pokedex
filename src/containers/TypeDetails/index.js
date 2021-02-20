@@ -1,21 +1,28 @@
-import { Container, Divider, Grid, makeStyles, Paper, TextField, Typography, useTheme } from '@material-ui/core';
+import { Container, Dialog, DialogContent, DialogContentText, DialogTitle, Divider, Grid, ListItem, ListItemText, makeStyles, Paper, Slide, TextField, Typography, useMediaQuery, useTheme } from '@material-ui/core';
 import Axios from 'axios';
-import React, { useEffect, useRef, useState } from 'react';
+import React, { forwardRef, useEffect, useRef, useState } from 'react';
 import { useHistory, useLocation } from 'react-router';
 import { Loading } from '../../components/Loading';
 import { TypeChip } from '../../components/TypeChip';
 import { getOrder } from '../../utils/function';
 import NotFound from '../../assets/notfound.jpg';
+import ExpandMore from "@material-ui/icons/ExpandMore";
+import { Fragment } from 'react';
+
+const Transition = forwardRef(function Transition(props, ref) {
+    return <Slide direction="up" ref={ref} {...props} />;
+});
 
 const useStyles = makeStyles((theme) => ({
     paper: {
         padding: '10px',
         margin: '0 auto',
-        minHeight: '250px',
+        minHeight: 0,
         width: '100%',
         borderRadius: '10px',
         [theme.breakpoints.up('md')]: {
             width: '80%',
+            minHeight: '250px',
         }
     },
     effectContainer: {
@@ -25,7 +32,35 @@ const useStyles = makeStyles((theme) => ({
         display: 'block',
         margin: '0 auto',
         cursor: 'pointer',
-    }
+    },
+    pointer: {
+        cursor: 'pointer'
+    },
+    table: {
+        width: '100%'
+    },
+    th: {
+        paddingTop: '5px',
+        paddingBottom: '5px',
+        width: '30%',
+        color: '#737373',
+        fontSize: '.875rem',
+        fontWeight: 'normal',
+        textAlign: 'right',
+        borderWidth: '1px 0 0 0',
+        borderStyle: 'solid',
+        borderColor: '#f0f0f0',
+        paddingRight: '10px'
+    },
+    td: {
+        paddingTop: '5px',
+        paddingBottom: '5px',
+        width: '70%',
+        borderWidth: '1px 0 0 0',
+        borderStyle: 'solid',
+        borderColor: '#f0f0f0',
+        paddingLeft: '10px'
+    },
 }))
 
 export const TypeDetails = () => {
@@ -35,11 +70,15 @@ export const TypeDetails = () => {
         type: "",
         poke: ""
     });
+    const [moveDetail, setMoveDetail] = useState({});
+    const [display, setDisplay] = useState(false);
+    const [openDialog, setOpenDialog] = useState(false);
     const mounted = useRef(true);
     const location = useLocation();
     const history = useHistory();
     const theme = useTheme();
     const classes = useStyles();
+    const isDesktop = useMediaQuery(theme.breakpoints.up('md'))
     useEffect(() => {
         mounted.current = true;
         const getType = async () => {
@@ -66,29 +105,33 @@ export const TypeDetails = () => {
         return () => mounted.current = false;
     }, []);
 
-    if (loading) {
-        return <Loading />
-    }
-
     const listPoke = (search) => {
         return type.pokemon && type.pokemon.filter(poke => {
             return poke.pokemon.name.includes(search)
         }).map((poke, index) => {
             return <Grid item key={index} xs={6} md={3}>
-                <img className={classes.img} width="80%" height="auto" onError={(e) => { e.target.onerror = null; e.target.src = NotFound }}  onClick={e => history.push("/pokemon/" + poke.pokemon.name)} alt={poke.pokemon.name} src={`https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/${getOrder(poke.pokemon.url)}.png`} />
+                <img className={classes.img} width="80%" height="auto" onError={(e) => { e.target.onerror = null; e.target.src = NotFound }} onClick={e => history.push("/pokemon/" + poke.pokemon.name)} alt={poke.pokemon.name} src={`https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/${getOrder(poke.pokemon.url)}.png`} />
                 <p style={{ 'textAlign': 'center' }}>{poke.pokemon.name}</p>
             </Grid>
         })
     }
+
     const listMove = (search) => {
         return type.moves && type.moves.filter(move => {
             return move.name.includes(search)
         }).map((move, index) => {
-            return <div key={index}>
-                {move.name}
-            </div>
+            return <ListItem key={index} button onClick={e => history.push("/move/" + move.name)}>
+                <ListItemText>
+                    {move.name}
+                </ListItemText>
+            </ListItem>
         })
     }
+
+    if (loading) {
+        return <Loading />
+    }
+
     return <Container>
         <Container>
             <Typography variant="h4" style={{ 'color': type.name && theme.palette.types[type.name].backgroundColor }} align="center"># {type.name && type.name.charAt(0).toUpperCase() + type.name.slice(1)}</Typography>
@@ -141,22 +184,33 @@ export const TypeDetails = () => {
                 </Paper>
             </Grid>
         </Grid>
-        <Grid container spacing={3}>
-            <Grid item xs={12} md={4}>
+        {isDesktop ? <Divider className={classes.effectContainer} /> : null}
+        <Grid container spacing={3} >
+            <Grid item xs={12} md={3} >
                 <Container className={classes.paper}>
-                    <Typography variant="h6">Moves</Typography>
-                    <TextField
-                        style={{ 'marginTop': '10px' }}
-                        color="primary"
-                        variant="outlined"
-                        size="small"
-                        label="Find Move"
-                        value={search.type}
-                        onChange={e => setSearch({ ...search, type: e.target.value })}
-                    />
-                    {listMove(search.type)}
+                    <Grid container onClick={e => setDisplay(!display)} direction="row" alignItems="flex-end" justify="center" className={classes.pointer}>
+                        <Grid item xs={4}>
+                            <Typography variant="h6">Moves </Typography>
+                        </Grid>
+                        <Grid item xs={8}>
+                            {isDesktop ? null : <ExpandMore fontSize="small" />}
+                        </Grid>
+                    </Grid>
+                    {!isDesktop && !display ? null : <Fragment>
+                        <TextField
+                            style={{ 'marginTop': '10px' }}
+                            color="primary"
+                            variant="outlined"
+                            size="small"
+                            label="Find Move"
+                            value={search.type}
+                            onChange={e => setSearch({ ...search, type: e.target.value })}
+                        />
+                        {listMove(search.type)}
+                    </Fragment>}
                 </Container>
             </Grid>
+            {isDesktop ? <Divider orientation="vertical" flexItem /> : null}
             <Grid item xs={12} md={8}>
                 <Container className={classes.paper}>
                     <Typography variant="h6">Pokemons</Typography>
