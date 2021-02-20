@@ -1,19 +1,15 @@
 import React, { useLayoutEffect, useState, Fragment } from 'react';
-
 import { ListItem, useStyles } from './style';
-
-import { useTheme, List, Collapse, Drawer, ListItemIcon, ListItemText, Hidden, TextField } from '@material-ui/core';
+import { useTheme, List, Collapse, Drawer, ListItemIcon, ListItemText, Hidden } from '@material-ui/core';
 import ExpandLess from "@material-ui/icons/ExpandLess";
 import ExpandMore from "@material-ui/icons/ExpandMore";
 import Logo from '../../assets/logo.png';
-
 import { useHistory } from 'react-router';
-
 import Axios from 'axios';
-
 import { drawerItems } from './data';
 import { POKE_ROOT_API } from '../../constants/poke';
 import { convertHyPhenStringToNormalString } from '../../utils/function';
+import { CustomTextField } from '../TextField';
 
 export const DrawerComponent = (props) => {
     //state
@@ -69,7 +65,7 @@ export const DrawerComponent = (props) => {
         <Fragment>
             <img className={classes.logo} src={Logo} width="200px" height="auto" alt="logo" />
             <form onSubmit={e => history.push("/pokemon/" + search)}>
-                <TextField placeholder="Search Poke..." variant="outlined" size="small" fullWidth color="primary" value={search} onChange={e => setSearch(e.target.value)} />
+                <CustomTextField placeholder="Search Poke..." variant="outlined" size="small" fullWidth color="primary" value={search} onChange={e => setSearch(e.target.value)} />
             </form>
         </Fragment>
     )
