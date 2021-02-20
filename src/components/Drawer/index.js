@@ -1,107 +1,36 @@
-import React, { useLayoutEffect, useState } from 'react';
-import Drawer from '@material-ui/core/Drawer';
-import MuiListItem from '@material-ui/core/ListItem';
-import ListItemIcon from '@material-ui/core/ListItemIcon';
-import ListItemText from '@material-ui/core/ListItemText';
-import { useStyles } from './style';
-import { useTheme, withStyles } from '@material-ui/core/styles';
-import Hidden from '@material-ui/core/Hidden';
-import Logo from '../../assets/logo.png';
-import PokeBall from '../../assets/pokeball.svg';
-import NintendoSwitch from '../../assets/nintendo-switch.svg';
-import Trainer from '../../assets/trainer.svg';
-import { useHistory } from 'react-router';
-import { Fragment } from 'react';
-import Axios from 'axios';
+import React, { useLayoutEffect, useState, Fragment } from 'react';
+
+import { ListItem, useStyles } from './style';
+
+import { useTheme,List, Collapse, Drawer, ListItemIcon, ListItemText, Hidden } from '@material-ui/core';
 import ExpandLess from "@material-ui/icons/ExpandLess";
 import ExpandMore from "@material-ui/icons/ExpandMore";
-import { List, Collapse } from '@material-ui/core';
-import MapPoke from '../../assets/map-pokemon.png';
-import MovePoke from '../../assets/move_gym.png';
+import Logo from '../../assets/logo.png';
 
-const drawerItems = [
-    {
-        id: 1,
-        text: "Pokedex",
-        icon: <img src={PokeBall} alt="pokedex" width="30px" height="30px" />,
-        to: '/',
-    },
-    {
-        id: 2,
-        text: "Regions",
-        icon: <img src={MapPoke} alt="pokedex" width="30px" height="30px" />,
-        children: [
-            // regions.map((item, index) => {
-            //     console.log(index + 6)
-            //     return {
-            //         id: parseInt(index + 6),
-            //         to: `/regions/${item.name}`,
-            //         text: item.name.charAt(0).toUpperCase() + item.name.substring(1) 
-            //     }
-            // })
-        ]
-    },
-    {
-        id: 3,
-        text: "Abilities",
-        icon: <img src={Trainer} alt="pokedex" width="30px" height="30px" />,
-        to: '/abilities'
-    },
-    {
-        id: 4,
-        text: "Types",
-        icon: <img src={MovePoke} alt="pokedex" width="30px" height="30px" />,
-        to: '/types'
-    },
-    {
-        id: 5,
-        text: "Games",
-        icon: <img src={NintendoSwitch} alt="pokedex" width="30px" height="30px" />,
-        to: '/games',
-        children: [
-            {
-                id: "GenI",
-                text: "Gen I",
-                to: '/generation1/pokedex',
-            },
-            {
-                id: "GenII",
-                text: "GenII",
-                to: '/generation2/pokedex',
-            }
-        ]
-    },
-]
+import { useHistory } from 'react-router';
 
-const ListItem = withStyles((theme) => ({
-    root: {
-        "&$selected": {
-            backgroundColor: theme.palette.primary.main,
-            color: theme.palette.common.white
-        },
-        "&$selected:hover": {
-            backgroundColor: theme.palette.primary.main,
-            color: theme.palette.common.white
-        },
-        "&:hover": {
-            backgroundColor: theme.palette.primary.main,
-            color: theme.palette.common.white
-        }
-    },
-    selected: {},
-}))(MuiListItem);
+import Axios from 'axios';
+
+import { drawerItems } from './data';
+import { POKE_ROOT_API } from '../../constants/poke';
 
 export const DrawerComponent = (props) => {
-
+    //state
     const [selectedIndex, setSelectedIndex] = useState(parseInt(sessionStorage.getItem("item")) || 1);
     const [open, setOpen] = useState(false);
 
+    //variable
     const history = useHistory();
+    const { mobileOpen, handleDrawerToggle, window } = props;
+    const container = window !== undefined ? () => window().document.body : undefined;
+    const classes = useStyles();
+    const theme = useTheme();
 
+    //useEffect
     useLayoutEffect(() => {
         const getRegions = async () => {
             try {
-                const response = await Axios.get("https://pokeapi.co/api/v2/region");
+                const response = await Axios.get(`${POKE_ROOT_API}/region`);
                 if (response.status === 200) {
                     const routers = response.data.results.map((item, index) => {
                         return {
@@ -132,16 +61,11 @@ export const DrawerComponent = (props) => {
             setOpen(!open)
         }
     };
-    //const
-    const { mobileOpen, handleDrawerToggle, window } = props;
-    const container = window !== undefined ? () => window().document.body : undefined;
-    const classes = useStyles();
-    const theme = useTheme();
+
     //reused component
     const drawer = (isMobile) => {
         return <div>
             {isMobile ? <img className={classes.logo} src={Logo} width="200px" height="auto" alt="logo" /> : <div className={classes.toolbar} />}
-            {/* <Divider /> */}
             <Fragment>
                 {drawerItems.map((item, index) => (
                     <Fragment key={index}>
