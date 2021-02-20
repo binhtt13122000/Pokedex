@@ -13,6 +13,7 @@ import Axios from 'axios';
 
 import { drawerItems } from './data';
 import { POKE_ROOT_API } from '../../constants/poke';
+import { convertHyPhenStringToNormalString } from '../../utils/function';
 
 export const DrawerComponent = (props) => {
     //state
@@ -35,7 +36,7 @@ export const DrawerComponent = (props) => {
                     const routers = response.data.results.map((item, index) => {
                         return {
                             id: (index + 1 + drawerItems.length),
-                            text: item.name.charAt(0).toUpperCase() + item.name.substring(1) ,
+                            text: convertHyPhenStringToNormalString(item.name),
                             to: `/regions/${item.name}`
                         }
                     })

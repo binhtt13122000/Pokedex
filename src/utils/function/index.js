@@ -61,3 +61,10 @@ export const calculateCurrentOfFemale = num => {
 export const calculateCurrentOfMale = num => {
     return 100 - calculateCurrentOfFemale(num)
 }
+
+export const convertHyPhenStringToNormalString = (text) => {
+    const subStringArray = text.split("-");
+    return subStringArray.map(subString => {
+        return subString.charAt(0).toUpperCase() + subString.slice(1)
+    }).join(" ");
+}
