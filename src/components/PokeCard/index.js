@@ -1,8 +1,10 @@
 import React from 'react';
 import { Grid, Card, Typography } from '@material-ui/core';
+import ReplaceImg from '../../assets/whothatpokemon.png'
 import { TypeChip } from '../TypeChip';
 import { useHistory } from 'react-router';
 import { useStyles } from './style';
+import { Image } from '../Image';
 
 export const PokeCard = (props) => {
     //const
@@ -19,7 +21,7 @@ export const PokeCard = (props) => {
     return <Card className={classes.card} onClick={e => showDetail(e, name)}>
         <Grid container>
             <Grid item xs={6}>
-                <img className={classes.img} src={image} alt={name} width="100px" height="100px" />
+                <Image className={classes.img} src={image || ReplaceImg} alt={name} width="100px" height="100px" />
                 <Typography className={`${classes.caption} ${classes.marginTop}`} variant="caption" display="block" gutterBottom>{name.toUpperCase()}</Typography>
             </Grid>
             <Grid item xs={6}>
