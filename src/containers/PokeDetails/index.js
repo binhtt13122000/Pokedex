@@ -1,4 +1,4 @@
-import { Container, Grid, LinearProgress, makeStyles, Paper, Typography, useMediaQuery, withStyles } from '@material-ui/core';
+import { Container, Grid, Paper, Typography, useMediaQuery } from '@material-ui/core';
 import Axios from 'axios';
 import React, { useState, useEffect, useRef } from 'react';
 import { TypeChip } from '../../components/TypeChip'
@@ -8,168 +8,32 @@ import { Fragment } from 'react';
 import Arrow from '../../assets/arrow.png'
 import { useHistory, useLocation } from 'react-router';
 import NotFound from '../../assets/notfound.jpg';
+import { BorderLinearProgress, useStyles } from './style';
+import { pictureNames } from './data';
+import { POKE_ROOT_API } from '../../constants/poke';
 
-const BorderLinearProgress = withStyles((theme) => ({
-    root: {
-        height: 10,
-        borderRadius: 5,
-    },
-    colorPrimary: {
-        backgroundColor: theme.palette.grey[theme.palette.type === 'light' ? 200 : 700],
-    },
-    bar: {
-        borderRadius: 5,
-        backgroundColor: theme.palette.primary.main,
-    },
-}))(LinearProgress);
-
-
-const pictureNames = [
-    'back_default',
-    'back_shiny',
-    'front_default',
-    'front_shiny'
-]
-const useStyles = makeStyles(theme => ({
-    img: {
-        width: '80%',
-        display: 'block',
-        margin: '0 auto'
-    },
-    caption: {
-        textAlign: 'center',
-        marginBottom: '30px',
-    },
-    groupTypeChip: {
-        '& > *': {
-            marginLeft: '5px'
-        }
-    },
-    pokedexContainer: {
-        paddingTop: '15px',
-        minHeight: 200,
-        maxWidth: 345,
-        paddingBottom: '10px',
-        [theme.breakpoints.down('sm')]: {
-            marginTop: '20px'
-        },
-        margin: '0 auto'
-        // backgroundColor: '#b2ebf2',
-        // paddingRight: '20px'
-    },
-    table: {
-    },
-    th: {
-        paddingTop: '5px',
-        paddingBottom: '5px',
-        width: '30%',
-        color: '#737373',
-        fontSize: '.875rem',
-        fontWeight: 'normal',
-        textAlign: 'right',
-        borderWidth: '1px 0 0 0',
-        borderStyle: 'solid',
-        borderColor: '#f0f0f0',
-        paddingRight: '10px'
-    },
-    td: {
-        paddingTop: '5px',
-        paddingBottom: '5px',
-        width: '70%',
-        borderWidth: '1px 0 0 0',
-        borderStyle: 'solid',
-        borderColor: '#f0f0f0',
-        paddingLeft: '10px'
-    },
-    tdValue: {
-        paddingTop: '5px',
-        paddingBottom: '5px',
-        width: '10%',
-        borderWidth: '1px 0 0 0',
-        borderStyle: 'solid',
-        borderColor: '#f0f0f0',
-        paddingLeft: '10px',
-        textAlign: 'center'
-    },
-    tdProgess: {
-        paddingTop: '5px',
-        paddingBottom: '5px',
-        width: '40%',
-        borderWidth: '1px 0 0 0',
-        borderStyle: 'solid',
-        borderColor: '#f0f0f0',
-        paddingLeft: '10px',
-    },
-    marginTop: {
-        marginTop: '0',
-        [theme.breakpoints.up('md')]: {
-            marginTop: '20px'
-        }
-    },
-    male: {
-        color: '#3273dc'
-    },
-    female: {
-        color: '#FF6BCE'
-    },
-    baseStatCaption: {
-        marginTop: '20px'
-    },
-    listImg: {
-        width: '80%',
-        margin: '0 auto'
-    },
-    evolveImg: {
-        display: 'block',
-        margin: '0 auto'
-    },
-    arrowImg: {
-        display: 'block',
-        margin: '0 auto',
-        [theme.breakpoints.down('sm')]: {
-            transform: 'rotate(90deg)'
-        }
-    },
-    typography: {
-        textAlign: 'center',
-        [theme.breakpoints.up('md')]: {
-            textAlign: 'left'
-        }
-    },
-    imgSub: {
-        textAlign: 'center',
-        fontWeight: '500'
-    },
-    selectImg: {
-        cursor: 'pointer',
-        border: 'solid',
-        borderRadius: '10px',
-        color: theme.palette.primary.main,
-        margin: '0 auto',
-        display: 'block'
-    },
-    active: {
-        color: 'green'
-    }
-}))
 export const PokeDetails = () => {
+    //variable
     const classes = useStyles();
     const location = useLocation();
+    const matches = useMediaQuery('(min-width:600px)');
+    const history = useHistory();
+    const mounted = useRef(true);
+    //state
     const [pokemon, setPokemon] = useState({});
     const [pokeDetails, setPokeDetails] = useState({});
     const [forms, setForms] = useState([]);
     const [evolutionChains, setEvolutionChain] = useState([]);
     const [selectedImg, setSelectedImg] = useState(null);
     const [loading, setLoading] = useState(false);
-    const matches = useMediaQuery('(min-width:600px)');
-    const history = useHistory();
-    const mounted = useRef(true);
+
+    //function
     const getPokemon = async (name, isNeedLoading) => {
         try {
             if(isNeedLoading){
                 setLoading(true);
             }
-            const response = await Axios.get('https://pokeapi.co/api/v2/pokemon/' + name);
+            const response = await Axios.get(`${POKE_ROOT_API}/pokemon/${name}`);
             if (response.status === 200) {
                 if (mounted.current) {
                     setPokemon(response.data);
@@ -212,6 +76,7 @@ export const PokeDetails = () => {
         getPokemon(form.name, false);
     }
 
+    //useEffect
     useEffect(() => {
         mounted.current = true;
         let name = location.pathname.substring(location.pathname.lastIndexOf("/") + 1)
@@ -222,12 +87,12 @@ export const PokeDetails = () => {
     }, [])
 
 
+    //render
     if (loading) {
         return <div>
             <Loading />
         </div>
     }
-
     return <Container>
         <Typography variant="h4" className={classes.caption}>{pokemon.name && pokemon.name.toUpperCase()} #{pokemon.id}</Typography>
         <Grid container>

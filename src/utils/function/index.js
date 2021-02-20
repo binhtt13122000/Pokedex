@@ -1,3 +1,5 @@
+import { FRONT_DEFAULT_ROOT, OFFICIAL_ART_ROOT } from "../../constants/poke";
+
 export const getOrder = (pokeUrl) => {
     return pokeUrl.slice(0, -1).substring(pokeUrl.slice(0, -1).lastIndexOf('/') + 1);
 }
@@ -67,4 +69,12 @@ export const convertHyPhenStringToNormalString = (text) => {
     return subStringArray.map(subString => {
         return subString.charAt(0).toUpperCase() + subString.slice(1)
     }).join(" ");
+}
+
+export const getOfficialArt = (order) => {
+    return `${OFFICIAL_ART_ROOT}${order}.png`
+}
+
+export const getFrontDefaultImage = (order) => {
+    return `${FRONT_DEFAULT_ROOT}${order}.png`
 }

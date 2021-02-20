@@ -5,7 +5,7 @@ import { useHistory, useLocation } from 'react-router';
 import { Loading } from '../../components/Loading';
 import { CustomPagination } from '../../components/Pagination';
 import { PokeCard } from '../../components/PokeCard';
-import { LIMIT } from '../../constants/poke';
+import { LIMIT, POKE_ROOT_API } from '../../constants/poke';
 import PokeApi from '../../services/PokeApi';
 import { StoreContext } from '../../utils/context';
 
@@ -34,7 +34,7 @@ export const PokeLib = () => {
             if (LIMIT * (pageIndex + 1) > dexTotal) {
                 limit = dexTotal - (pageIndex) * LIMIT;
             }
-            const response = await Axios.get(`https://pokeapi.co/api/v2/pokemon?offset=${LIMIT * pageIndex}&limit=${limit}`)
+            const response = await Axios.get(`${POKE_ROOT_API}/pokemon?offset=${LIMIT * pageIndex}&limit=${limit}`)
             if (response.status === 200) {
                 if (mounted.current) {
                     setTotal(dexTotal || response.data.count);
