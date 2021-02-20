@@ -7,6 +7,7 @@ import { CustomPagination } from '../../components/Pagination';
 import { PokeCard } from '../../components/PokeCard';
 import { LIMIT } from '../../constants/poke';
 import PokeApi from '../../services/PokeApi';
+import { StoreContext } from '../../utils/context';
 
 export const PokeLib = () => {
     const [pokemonList, setPokemonList] = useState([]);
@@ -20,6 +21,7 @@ export const PokeLib = () => {
     const mounted = useRef(true);
     const location = useLocation();
     const history = useHistory();
+    const { pokeStore } = useRef(StoreContext);
 
     const fetchPokemon = async (pageIndex, dexTotal) => {
         try {
@@ -61,7 +63,7 @@ export const PokeLib = () => {
     }
 
     const changePage = (e, value) => {
-        const nationDexTotal = parseInt(sessionStorage.getItem("total"));
+        const nationDexTotal = pokeStore.pokeTotal;
         history.push("/?page=" + value);
         fetchPokemon(value - 1, nationDexTotal)
     }

@@ -5,10 +5,7 @@ import ExpandLess from "@material-ui/icons/ExpandLess";
 import ExpandMore from "@material-ui/icons/ExpandMore";
 import Logo from '../../assets/logo.png';
 import { useHistory } from 'react-router';
-import Axios from 'axios';
 import { drawerItems } from './data';
-import { POKE_ROOT_API } from '../../constants/poke';
-import { convertHyPhenStringToNormalString } from '../../utils/function';
 import { CustomTextField } from '../TextField';
 
 export const DrawerComponent = (props) => {
@@ -26,23 +23,16 @@ export const DrawerComponent = (props) => {
 
     //useEffect
     useLayoutEffect(() => {
-        const getRegions = async () => {
-            try {
-                const response = await Axios.get(`${POKE_ROOT_API}/region`);
-                if (response.status === 200) {
-                    const routers = response.data.results.map((item, index) => {
-                        return {
-                            id: (index + 1 + drawerItems.length),
-                            text: convertHyPhenStringToNormalString(item.name),
-                            to: `/regions/${item.name}`
-                        }
-                    })
-                    drawerItems[1].children = routers;
+        const getRegions = () => {
+            const routers = props.regions.map((item, index) => {
+                return {
+                    ...item, 
+                    id: (index + 1 + drawerItems.length),
                 }
-            } catch (e) {
-                console.log(e);
-            }
+            })
+            drawerItems[1].children = routers;
         }
+
         getRegions();
     }, [])
 
