@@ -7,7 +7,6 @@ import { useStyles } from './style';
 import { useTheme, withStyles } from '@material-ui/core/styles';
 import Hidden from '@material-ui/core/Hidden';
 import Logo from '../../assets/logo.png';
-import NotificationsActiveIcon from '@material-ui/icons/NotificationsActive';
 import PokeBall from '../../assets/pokeball.svg';
 import NintendoSwitch from '../../assets/nintendo-switch.svg';
 import Trainer from '../../assets/trainer.svg';
@@ -17,7 +16,8 @@ import Axios from 'axios';
 import ExpandLess from "@material-ui/icons/ExpandLess";
 import ExpandMore from "@material-ui/icons/ExpandMore";
 import { List, Collapse } from '@material-ui/core';
-// import { regions } from '../../assets/data';
+import MapPoke from '../../assets/map-pokemon.png';
+import MovePoke from '../../assets/move_gym.png';
 
 const drawerItems = [
     {
@@ -29,7 +29,7 @@ const drawerItems = [
     {
         id: 2,
         text: "Regions",
-        icon: <img src={PokeBall} alt="pokedex" width="30px" height="30px" />,
+        icon: <img src={MapPoke} alt="pokedex" width="30px" height="30px" />,
         children: [
             // regions.map((item, index) => {
             //     console.log(index + 6)
@@ -50,7 +50,7 @@ const drawerItems = [
     {
         id: 4,
         text: "Types",
-        icon: <NotificationsActiveIcon />,
+        icon: <img src={MovePoke} alt="pokedex" width="30px" height="30px" />,
         to: '/types'
     },
     {
@@ -62,13 +62,11 @@ const drawerItems = [
             {
                 id: "GenI",
                 text: "Gen I",
-                icon: <NotificationsActiveIcon />,
                 to: '/generation1/pokedex',
             },
             {
                 id: "GenII",
                 text: "GenII",
-                icon: <NotificationsActiveIcon />,
                 to: '/generation2/pokedex',
             }
         ]

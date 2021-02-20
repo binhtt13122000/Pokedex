@@ -8,6 +8,7 @@ import { NotFound } from '../containers/NotFound';
 import { AbilityPage } from '../containers/AbilityPage';
 import { TypePage } from '../containers/TypePage';
 import { TypeDetails } from '../containers/TypeDetails';
+import { MoveDetail } from '../containers/MoveDetail';
 export const PublicRoute = ({ component: Component, ...rest }) => {
     return <Route {...rest} render={
         props => {
@@ -46,6 +47,11 @@ const routes = [
         path: "/types",
         name: "Types",
         component: TypePage
+    },
+    {
+        path: "/move/:name",
+        name: "Move",
+        component: MoveDetail
     },
     {
         path: "/",
