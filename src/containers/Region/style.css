@@ -1,0 +1,13 @@
+@import url('https://fonts.googleapis.com/css2?family=Spirax&display=swap');
+
+.quote {
+    padding: 20px;
+    font-family: 'Spirax', cursive;
+    font-size: large;
+    text-align: center;
+    box-sizing: border-box;
+}
+
+.caption {
+    font-size: 30px;
+}
