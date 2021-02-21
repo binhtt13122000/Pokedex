@@ -1,6 +1,9 @@
 import { createMuiTheme } from "@material-ui/core";
 
 export const theme = createMuiTheme({
+    zIndex: {
+        appBar: 1201
+    },
     palette: {
         primary: {
             main: '#ef5350'

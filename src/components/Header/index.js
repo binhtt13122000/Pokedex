@@ -11,11 +11,14 @@ import { useHistory } from 'react-router';
 
 import Logo from '../../assets/logo.png';
 import { CustomTextField } from '../TextField';
+import { useMediaQuery, useTheme } from '@material-ui/core';
 
 export const Header = (props) => {
     //variable
     const classes = useStyles();
     const history = useHistory();
+    const theme = useTheme();
+    const isDesktop = useMediaQuery(theme.breakpoints.up('md'));
 
     //state
     const [search, setSearch] = useState("");
@@ -38,12 +41,13 @@ export const Header = (props) => {
                 >
                     <MenuIcon />
                 </IconButton>
-                <div className={classes.flexGrow} />
-                <img src={Logo} alt="logo" width="100px" height="auto" className={classes.logo} />
+
+                {isDesktop ? <img src={Logo} alt="logo" width="100px" height="auto" className={classes.logo} /> : null}                
                 <div className={classes.flexGrowInput} />
-                <form onSubmit={submitHadler}>
+                {isDesktop ? <form onSubmit={submitHadler}>
                     <CustomTextField onChange={e => setSearch(e.target.value)} value={search} placeholder="Search Poke..." type="resize" className={classes.searchBar} />
-                </form>
+                </form> : <img src={Logo} alt="logo" width="100px" height="auto" className={classes.logo} />}
+                
             </Toolbar>
         </AppBar>
     );
