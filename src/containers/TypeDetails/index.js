@@ -1,84 +1,32 @@
-import { Container, Dialog, DialogContent, DialogContentText, DialogTitle, Divider, Grid, ListItem, ListItemText, makeStyles, Paper, Slide, TextField, Typography, useMediaQuery, useTheme } from '@material-ui/core';
+import { Container, Divider, Grid, ListItem, ListItemText, makeStyles, Paper, TextField, Typography, useMediaQuery, useTheme } from '@material-ui/core';
 import Axios from 'axios';
-import React, { forwardRef, useEffect, useRef, useState } from 'react';
+import React, { useEffect, useRef, useState, Fragment } from 'react';
 import { useHistory, useLocation } from 'react-router';
 import { Loading } from '../../components/Loading';
+import { Image } from '../../components/Image';
 import { TypeChip } from '../../components/TypeChip';
-import { getOrder } from '../../utils/function';
-import NotFound from '../../assets/notfound.jpg';
+import { convertHyPhenStringToNormalString, getOrder } from '../../utils/function';
 import ExpandMore from "@material-ui/icons/ExpandMore";
-import { Fragment } from 'react';
-
-const Transition = forwardRef(function Transition(props, ref) {
-    return <Slide direction="up" ref={ref} {...props} />;
-});
-
-const useStyles = makeStyles((theme) => ({
-    paper: {
-        padding: '10px',
-        margin: '0 auto',
-        minHeight: 0,
-        width: '100%',
-        borderRadius: '10px',
-        [theme.breakpoints.up('md')]: {
-            width: '80%',
-            minHeight: '250px',
-        }
-    },
-    effectContainer: {
-        marginTop: '20px'
-    },
-    img: {
-        display: 'block',
-        margin: '0 auto',
-        cursor: 'pointer',
-    },
-    pointer: {
-        cursor: 'pointer'
-    },
-    table: {
-        width: '100%'
-    },
-    th: {
-        paddingTop: '5px',
-        paddingBottom: '5px',
-        width: '30%',
-        color: '#737373',
-        fontSize: '.875rem',
-        fontWeight: 'normal',
-        textAlign: 'right',
-        borderWidth: '1px 0 0 0',
-        borderStyle: 'solid',
-        borderColor: '#f0f0f0',
-        paddingRight: '10px'
-    },
-    td: {
-        paddingTop: '5px',
-        paddingBottom: '5px',
-        width: '70%',
-        borderWidth: '1px 0 0 0',
-        borderStyle: 'solid',
-        borderColor: '#f0f0f0',
-        paddingLeft: '10px'
-    },
-}))
+import { useStyles } from './style';
+import { POKE_ROOT_API } from '../../constants/poke';
 
 export const TypeDetails = () => {
+    //state
     const [type, setType] = useState({});
     const [loading, setLoading] = useState(false);
     const [search, setSearch] = useState({
         type: "",
         poke: ""
     });
-    const [moveDetail, setMoveDetail] = useState({});
     const [display, setDisplay] = useState(false);
-    const [openDialog, setOpenDialog] = useState(false);
+    //variable
     const mounted = useRef(true);
     const location = useLocation();
     const history = useHistory();
     const theme = useTheme();
     const classes = useStyles();
     const isDesktop = useMediaQuery(theme.breakpoints.up('md'))
+    //useeffect
     useEffect(() => {
         mounted.current = true;
         const getType = async () => {
@@ -87,7 +35,7 @@ export const TypeDetails = () => {
                 if (mounted.current) {
                     setLoading(true);
                 }
-                const response = await Axios.get("https://pokeapi.co/api/v2/type/" + typeName);
+                const response = await Axios.get(`${POKE_ROOT_API}/type/${typeName}`);
                 if (response.status === 200) {
                     if (mounted.current) {
                         setType(response.data);
@@ -105,13 +53,15 @@ export const TypeDetails = () => {
         return () => mounted.current = false;
     }, []);
 
+
+    //component
     const listPoke = (search) => {
         return type.pokemon && type.pokemon.filter(poke => {
             return poke.pokemon.name.includes(search)
         }).map((poke, index) => {
             return <Grid item key={index} xs={6} md={3}>
-                <img className={classes.img} width="80%" height="auto" onError={(e) => { e.target.onerror = null; e.target.src = NotFound }} onClick={e => history.push("/pokemon/" + poke.pokemon.name)} alt={poke.pokemon.name} src={`https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/${getOrder(poke.pokemon.url)}.png`} />
-                <p style={{ 'textAlign': 'center' }}>{poke.pokemon.name}</p>
+                <Image className={classes.img} width="80%" height="auto" onClick={e => history.push("/pokemon/" + poke.pokemon.name)} alt={poke.pokemon.name} src={`https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/${getOrder(poke.pokemon.url)}.png`} />
+                <p style={{ 'textAlign': 'center' }}>{convertHyPhenStringToNormalString(poke.pokemon.name)}</p>
             </Grid>
         })
     }
@@ -122,12 +72,13 @@ export const TypeDetails = () => {
         }).map((move, index) => {
             return <ListItem key={index} button onClick={e => history.push("/move/" + move.name)}>
                 <ListItemText>
-                    {move.name}
+                    {convertHyPhenStringToNormalString(move.name)}
                 </ListItemText>
             </ListItem>
         })
     }
 
+    //render
     if (loading) {
         return <Loading />
     }
