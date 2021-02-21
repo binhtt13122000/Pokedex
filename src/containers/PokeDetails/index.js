@@ -1,13 +1,10 @@
-import { Container, Grid, Paper, Typography, useMediaQuery } from '@material-ui/core';
+import { Container, Grid, Typography, useMediaQuery } from '@material-ui/core';
 import Axios from 'axios';
 import React, { useState, useEffect, useRef } from 'react';
-import { TypeChip } from '../../components/TypeChip'
 import { Loading } from '../../components/Loading';
-import { calculatePokemonHightestStat, padLeadingZeros, calculatePokemonLowestStat, getListEvolution, getOrder, calculateCurrentOfMale, calculateCurrentOfFemale, getOfficialArt } from '../../utils/function';
-import { Fragment } from 'react';
+import { getListEvolution, getOrder, calculateCurrentOfMale, getOfficialArt } from '../../utils/function';
 import { useHistory, useLocation } from 'react-router';
-import NotFound from '../../assets/notfound.jpg';
-import { BorderLinearProgress, useStyles } from './style';
+import { useStyles } from './style';
 import { pictureNames } from './data';
 import { POKE_ROOT_API } from '../../constants/poke';
 import { PokemonImageSelector } from './PokemonImageSelector';

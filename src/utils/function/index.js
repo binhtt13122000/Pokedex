@@ -28,20 +28,20 @@ export const getListEvolution = chain => {
     let result = [];
     let start = {
         name: chain.species.name,
-        image: `https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/other/official-artwork/${getOrder(chain.species.url)}.png`
+        image: getOfficialArt(getOrder(chain.species.url))
     }
     if(chain['evolves_to'].length > 0){
         chain['evolves_to'].forEach(function (item) {
             let second = {
                 name: item.species.name,
-                image: `https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/other/official-artwork/${getOrder(item.species.url)}.png`,
+                image: getOfficialArt(getOrder(chain.species.url)),
                 details: item['evolution_details']
             }
             if (item['evolves_to'].length > 0) {
                 item['evolves_to'].forEach(function (i) {
                     let third = {
                         name: i.species.name,
-                        image: `https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/other/official-artwork/${getOrder(i.species.url)}.png`,
+                        image: getOfficialArt(getOrder(chain.species.url)),
                         details: i['evolution_details']
                     }
                     result.push({start: start, second: second, third: third, length: 3});
