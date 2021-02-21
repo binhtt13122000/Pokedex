@@ -34,14 +34,14 @@ export const getListEvolution = chain => {
         chain['evolves_to'].forEach(function (item) {
             let second = {
                 name: item.species.name,
-                image: getOfficialArt(getOrder(chain.species.url)),
+                image: getOfficialArt(getOrder(item.species.url)),
                 details: item['evolution_details']
             }
             if (item['evolves_to'].length > 0) {
                 item['evolves_to'].forEach(function (i) {
                     let third = {
                         name: i.species.name,
-                        image: getOfficialArt(getOrder(chain.species.url)),
+                        image: getOfficialArt(getOrder(i.species.url)),
                         details: i['evolution_details']
                     }
                     result.push({start: start, second: second, third: third, length: 3});

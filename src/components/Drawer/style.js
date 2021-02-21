@@ -23,7 +23,7 @@ export const ListItem = withStyles((theme) => ({
 
 export const useStyles = makeStyles((theme) => ({
   drawer: {
-    [theme.breakpoints.up('sm')]: {
+    [theme.breakpoints.up('md')]: {
       width: DRAWER_SIZE,
       flexShrink: 0,
     },

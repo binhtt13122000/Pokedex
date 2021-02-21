@@ -99,7 +99,7 @@ export const DrawerComponent = (props) => {
     //render
     return (
         <nav className={classes.drawer} aria-label="mailbox folders">
-            <Hidden smUp implementation="css">
+            <Hidden mdUp implementation="css">
                 <Drawer
                     container={container}
                     variant="temporary"
@@ -116,7 +116,7 @@ export const DrawerComponent = (props) => {
                     {drawer(theme.breakpoints.up('sm'))}
                 </Drawer>
             </Hidden>
-            <Hidden xsDown implementation="css">
+            <Hidden smDown implementation="css">
                 <Drawer
                     classes={{
                         paper: classes.drawerPaper,

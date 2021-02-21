@@ -32,7 +32,7 @@ export const PokeDetails = () => {
     //function
     const getPokemon = async (name, isNeedLoading) => {
         try {
-            if(isNeedLoading){
+            if (isNeedLoading) {
                 setLoading(true);
             }
             const response = await Axios.get(`${POKE_ROOT_API}/pokemon/${name}`);
@@ -97,22 +97,27 @@ export const PokeDetails = () => {
     }
     return <Container>
         <Typography variant="h4" className={classes.caption}>{pokemon.name && pokemon.name.toUpperCase()} #{pokemon.id}</Typography>
-        <Grid container>
-            <Grid item xs={12} sm={4}>
-                <PokemonImageSelector 
+        <Grid container spacing={3}>
+            <Grid item xs={12} sm={6} md={4}>
+                <PokemonImageSelector
                     pokemon={pokemon}
                     forms={forms}
                     selectImg={setAthotherVersion}
                     selectedImg={selectedImg}
                 />
             </Grid>
-            <Grid item xs={12} sm={4}>
-                <PokedexData pokemon={pokemon} pokeDetails={pokeDetails}/>
+            <Grid item xs={12} sm={6} md={4}>
+                <PokedexData pokemon={pokemon} pokeDetails={pokeDetails} />
             </Grid>
-            <Grid item xs={12} sm={4}>
-                <TrainingData pokemon={pokemon} pokeDetails={pokeDetails} />
-                <div className={classes.marginTop}></div>
-                <BreedingData pokeDetails={pokeDetails} />
+            <Grid item xs={12} sm={12} md={4}>
+                <Grid container spacing={3}>
+                    <Grid item xs={12} sm={6} md={12}>
+                        <TrainingData pokemon={pokemon} pokeDetails={pokeDetails} />
+                    </Grid>
+                    <Grid item xs ={12} sm={6} md={12}>
+                        <BreedingData pokeDetails={pokeDetails} />
+                    </Grid>
+                </Grid>
             </Grid>
         </Grid>
         <Grid container className={classes.baseStatCaption}>
@@ -124,8 +129,8 @@ export const PokeDetails = () => {
                 <Typography className={classes.typography} variant="h6">Pixel Images</Typography>
                 <div className={classes.listImg}>
                     {pokemon.sprites && pictureNames.map((item, index) => {
-                        if(pokemon.sprites && pokemon.sprites[item] !== null){
-                            return <img className={classes.pixelImg} key={index} src={pokemon.sprites && pokemon.sprites[item]} alt={pokemon.name} />
+                        if (pokemon.sprites && pokemon.sprites[item] !== null) {
+                            return <img key={index} src={pokemon.sprites && pokemon.sprites[item]} alt={pokemon.name} />
                         } else {
                             return null;
                         }
@@ -145,6 +150,6 @@ export const PokeDetails = () => {
             </Grid>
         </Grid>
         <Typography className={`${classes.typography} ${classes.baseStatCaption}`} variant="h6">Evolution Chart</Typography>
-        <EvolutionChart evolutionChains={evolutionChains} matches={matches}/>
+        <EvolutionChart evolutionChains={evolutionChains} matches={matches} />
     </Container>
 }

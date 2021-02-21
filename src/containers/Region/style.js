@@ -15,7 +15,6 @@ export const useStyles = makeStyles((theme) => ({
         maxWidth: 345,
         paddingBottom: '10px',
         [theme.breakpoints.down('sm')]: {
-            marginTop: '20px',
             minHeight: 100
         },
         margin: '0 auto'
@@ -26,10 +25,9 @@ export const useStyles = makeStyles((theme) => ({
         maxWidth: 345,
         paddingBottom: '10px',
         [theme.breakpoints.down('sm')]: {
-            marginTop: '20px',
             minHeight: 100
         },
-        // margin: '0 auto'
+        margin: '0 auto'
     },
     table: {
         width: '100%'

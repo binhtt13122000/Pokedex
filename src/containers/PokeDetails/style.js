@@ -18,14 +18,16 @@ export const useStyles = makeStyles(theme => ({
     pokedexContainer: {
         paddingTop: '15px',
         minHeight: 200,
-        maxWidth: 345,
+        width: "100%",
         paddingBottom: '10px',
-        [theme.breakpoints.down('sm')]: {
-            marginTop: '20px',
+        [theme.breakpoints.up('sm')]: {
+            width: '90%'
         },
-        margin: '0 auto'
+        margin: '0 auto',
+        overflow: 'auto'
     },
     table: {
+        width: '100%'
     },
     th: {
         paddingTop: '5px',
@@ -38,7 +40,7 @@ export const useStyles = makeStyles(theme => ({
         borderWidth: '1px 0 0 0',
         borderStyle: 'solid',
         borderColor: '#f0f0f0',
-        paddingRight: '10px'
+        paddingRight: '10px',
     },
     td: {
         paddingTop: '5px',
@@ -47,7 +49,7 @@ export const useStyles = makeStyles(theme => ({
         borderWidth: '1px 0 0 0',
         borderStyle: 'solid',
         borderColor: '#f0f0f0',
-        paddingLeft: '10px'
+        paddingLeft: '10px',
     },
     tdValue: {
         paddingTop: '5px',

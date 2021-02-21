@@ -7,8 +7,8 @@ export const useStyles = makeStyles(theme => ({
         margin: '0 auto',
         marginBottom: '20px',
         paddingTop: '10px',
-        [theme.breakpoints.up('md')]: {
-            width: '80%'
+        [theme.breakpoints.up('sm')]: {
+            width: '90%'
         },
         cursor: 'pointer'
     },

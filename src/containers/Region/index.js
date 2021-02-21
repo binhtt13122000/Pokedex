@@ -99,11 +99,11 @@ export const Region = () => {
         return <Loading />
     }
     return <Container>
-        <Grid container spacing={2} className={classes.center}>
+        <Grid container spacing={2} className={classes.center} spacing={3}>
             <Grid item xs={12} md={3}>
                 <Image width="100%" height="auto" className={classes.banner} src={regionImg.img} alt={regionImg.name} />
             </Grid>
-            <Grid item xs={12} md={4}>
+            <Grid item xs={12} md={5}>
                 <Paper elevation={3} className={classes.paper}>
                     <Container>
                         <Typography variant="h5"># {region.name && convertHyPhenStringToNormalString(region.name).toUpperCase()}</Typography>
@@ -145,7 +145,7 @@ export const Region = () => {
                     </Container>
                 </Paper>
             </Grid>
-            <Grid item xs={12} md={5}>
+            <Grid item xs={12} md={4}>
                 <Paper elevation={3} className={classes.paperMap}>
                     <Container>
                         <Typography variant="h6"># Map</Typography>
