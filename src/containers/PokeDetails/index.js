@@ -2,7 +2,7 @@ import { Container, Grid, Typography, useMediaQuery } from '@material-ui/core';
 import Axios from 'axios';
 import React, { useState, useEffect, useRef } from 'react';
 import { Loading } from '../../components/Loading';
-import { getListEvolution, getOrder, getOfficialArt } from '../../utils/function';
+import { getListEvolution, getOrder, getOfficialArt, convertHyPhenStringToNormalString } from '../../utils/function';
 import { useHistory, useLocation } from 'react-router';
 import { useStyles } from './style';
 import { pictureNames } from './data';
@@ -35,37 +35,71 @@ export const PokeDetails = () => {
             if (isNeedLoading) {
                 setLoading(true);
             }
-            const response = await Axios.get(`${POKE_ROOT_API}/pokemon/${name}`);
-            if (response.status === 200) {
+            const speciesResponse = await Axios.get(`${POKE_ROOT_API}/pokemon-species/${name}`);
+            if (speciesResponse.status === 200) {
                 if (mounted.current) {
-                    setPokemon(response.data);
-                }
-                const responseDetail = await Axios.get(response.data.species.url);
-                if (responseDetail.status === 200) {
+                    let pokeUrl = "";
+                    setPokeDetails(speciesResponse.data);
+                    const forms = speciesResponse.data.varieties.map((variety, index) => {
+                        if (variety['is_default']) {
+                            pokeUrl = variety.pokemon.url;
+                        }
+                        return { img: getOfficialArt(getOrder(variety.pokemon.url)), isDefault: variety['is_default'], name: variety.pokemon.name, id: index }
+                    })
+                    forms.sort((a, b) => {
+                        return a.id - b.id;
+                    })
                     if (mounted.current) {
-                        setPokeDetails(responseDetail.data);
-                        const forms = responseDetail.data.varieties.map((variety, index) => {
-                            return { img: getOfficialArt(getOrder(variety.pokemon.url)), isDefault: variety['is_default'], name: variety.pokemon.name, id: index }
-                        })
-                        forms.sort((a, b) => {
-                            return a.id - b.id;
-                        })
+                        setForms(forms)
+                    }
+                    const pokeResponse = await Axios.get(`${pokeUrl}`);
+                    if (pokeResponse.status === 200) {
                         if (mounted.current) {
-                            setForms(forms)
+                            setPokemon(pokeResponse.data);
                         }
                     }
-                    const evolutionChain = await Axios.get(responseDetail.data['evolution_chain'].url);
-                    if (evolutionChain.status === 200) {
-                        const evolveArr = getListEvolution(evolutionChain.data.chain);
-                        if (mounted.current) {
-                            setEvolutionChain(evolveArr);
-                        }
+                }
+                const evolutionChain = await Axios.get(speciesResponse.data['evolution_chain'].url);
+                if (evolutionChain.status === 200) {
+                    const evolveArr = getListEvolution(evolutionChain.data.chain);
+                    if (mounted.current) {
+                        setEvolutionChain(evolveArr);
                     }
                 }
             }
         } catch (ex) {
-            console.log(ex)
-            history.push('/not_found')
+            try {
+                const response = await Axios.get(`${POKE_ROOT_API}/pokemon/${name}`);
+                if (response.status === 200) {
+                    if (mounted.current) {
+                        setPokemon(response.data);
+                    }
+                    const responseDetail = await Axios.get(response.data.species.url);
+                    if (responseDetail.status === 200) {
+                        if (mounted.current) {
+                            setPokeDetails(responseDetail.data);
+                            const forms = responseDetail.data.varieties.map((variety, index) => {
+                                return { img: getOfficialArt(getOrder(variety.pokemon.url)), isDefault: variety['is_default'], name: variety.pokemon.name, id: index }
+                            })
+                            forms.sort((a, b) => {
+                                return a.id - b.id;
+                            })
+                            if (mounted.current) {
+                                setForms(forms)
+                            }
+                        }
+                        const evolutionChain = await Axios.get(responseDetail.data['evolution_chain'].url);
+                        if (evolutionChain.status === 200) {
+                            const evolveArr = getListEvolution(evolutionChain.data.chain);
+                            if (mounted.current) {
+                                setEvolutionChain(evolveArr);
+                            }
+                        }
+                    }
+                }
+            } catch (ex) {
+                history.push('/not_found')
+            }
         } finally {
             if (mounted.current) {
                 setLoading(false)
@@ -96,7 +130,7 @@ export const PokeDetails = () => {
         </div>
     }
     return <Container>
-        <Typography variant="h4" className={classes.caption}>{pokemon.name && pokemon.name.toUpperCase()} #{pokemon.id}</Typography>
+        <Typography variant="h4" className={classes.caption}>{pokemon.name && convertHyPhenStringToNormalString(pokemon.name).toUpperCase()} #{pokemon.id}</Typography>
         <Grid container spacing={3}>
             <Grid item xs={12} sm={6} md={4}>
                 <PokemonImageSelector
@@ -114,7 +148,7 @@ export const PokeDetails = () => {
                     <Grid item xs={12} sm={6} md={12}>
                         <TrainingData pokemon={pokemon} pokeDetails={pokeDetails} />
                     </Grid>
-                    <Grid item xs ={12} sm={6} md={12}>
+                    <Grid item xs={12} sm={6} md={12}>
                         <BreedingData pokeDetails={pokeDetails} />
                     </Grid>
                 </Grid>

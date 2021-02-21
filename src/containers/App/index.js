@@ -9,14 +9,17 @@ import { Loading } from '../../components/Loading';
 import { StoreContext } from '../../utils/context';
 import { POKE_ROOT_API } from '../../constants/poke';
 import { convertHyPhenStringToNormalString } from '../../utils/function';
+import { useHistory } from 'react-router';
 
 const App = () => {
   //state
   const [mobileOpen, setMobileOpen] = useState(false);
   const [loading, setLoading] = useState(false);
   const [regions, setRegions] = useState([]);
+  const [selectedIndex, setSelectedIndex] = useState(parseInt(sessionStorage.getItem("item")) || 1);
 
   //variable
+  const history = useHistory()
   const mouted = useRef(true);
   const classes = useStyles();
   const { pokeStore } = useContext(StoreContext);
@@ -64,7 +67,6 @@ const App = () => {
             }
           })
           if (mouted.current) {
-            console.log("b")
             setRegions(regionList)
           }
         }
@@ -87,6 +89,12 @@ const App = () => {
     setMobileOpen(!mobileOpen);
   };
 
+  const goHomePage = e => {
+    history.push("/");
+    setSelectedIndex(1)
+    sessionStorage.setItem("item", 1);
+  }
+
 
   //render
   if (loading) {
@@ -96,9 +104,11 @@ const App = () => {
     <div className={classes.root}>
       <CssBaseline />
       <header>
-        <Header handleDrawerToggle={handleDrawerToggle} />
+        <Header goHomePage={goHomePage} handleDrawerToggle={handleDrawerToggle} />
       </header>
       <DrawerComponent
+        selectedIndex={selectedIndex}
+        setSelectedIndex={setSelectedIndex}
         regions={regions}
         mobileOpen={mobileOpen}
         handleDrawerToggle={handleDrawerToggle}

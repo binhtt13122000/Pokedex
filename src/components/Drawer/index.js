@@ -11,14 +11,13 @@ import { StoreContext } from '../../utils/context';
 
 export const DrawerComponent = (props) => {
     //state
-    const [selectedIndex, setSelectedIndex] = useState(parseInt(sessionStorage.getItem("item")) || 1);
     const [openChildren, setOpenChildren] = useState(false);
     const [search, setSearch] = useState("");
 
     //variable
     const history = useHistory();
     const { pokeStore} = useContext(StoreContext);
-    const { mobileOpen, handleDrawerToggle, window } = props;
+    const { mobileOpen, handleDrawerToggle, window, selectedIndex, setSelectedIndex } = props;
     const container = window !== undefined ? () => window().document.body : undefined;
     const classes = useStyles();
     const theme = useTheme();
@@ -63,8 +62,10 @@ export const DrawerComponent = (props) => {
                     variant="outlined" 
                     size="small" 
                     fullWidth color="primary"
-                    // value={search} 
-                    // onChange={e => setSearch(e.target.value)} 
+                    value={search} 
+                    onChange={(event, newValue) => {
+                        setSearch(newValue);
+                    }}
                     />
             </form>
         </Fragment>

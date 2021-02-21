@@ -1,14 +1,10 @@
 import React, { useState } from 'react';
-
 import { useStyles } from './style';
-
 import AppBar from '@material-ui/core/AppBar';
 import Toolbar from '@material-ui/core/Toolbar';
 import IconButton from '@material-ui/core/IconButton';
 import MenuIcon from '@material-ui/icons/Menu';
-
 import { useHistory } from 'react-router';
-
 import Logo from '../../assets/logo.png';
 import { CustomTextField } from '../TextField';
 import { useMediaQuery, useTheme } from '@material-ui/core';
@@ -27,11 +23,6 @@ export const Header = (props) => {
     const submitHadler = (e) => {
         history.push("/pokemon/" + search);
     }
-
-    const goHomePage = e => {
-        history.push("/");
-        sessionStorage.setItem("item", 1);
-    } 
     //render
     return (
         <AppBar position="fixed" className={classes.appBar}>
@@ -46,11 +37,11 @@ export const Header = (props) => {
                     <MenuIcon />
                 </IconButton>
 
-                {isDesktop ? <img src={Logo} alt="logo" width="100px" height="auto" className={classes.logo} onClick={goHomePage}/> : null}                
+                {isDesktop ? <img src={Logo} alt="logo" width="100px" height="auto" className={classes.logo} onClick={props.goHomePage}/> : null}                
                 <div className={classes.flexGrowInput} />
                 {isDesktop ? <form onSubmit={submitHadler}>
                     <CustomTextField onChange={e => setSearch(e.target.value)} value={search} placeholder="Search Poke..." type="resize" className={classes.searchBar} />
-                </form> : <img src={Logo} alt="logo" width="100px" height="auto" className={classes.logo} onClick={e => history.push("/")} />}
+                </form> : <img src={Logo} alt="logo" width="100px" height="auto" className={classes.logo} onClick={props.goHomePage} />}
                 
             </Toolbar>
         </AppBar>

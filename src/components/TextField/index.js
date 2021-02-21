@@ -2,7 +2,8 @@ import React from 'react';
 import { InputBase, TextField } from '@material-ui/core';
 import SearchIcon from '@material-ui/icons/Search';
 import { useStyles } from './style';
-import { Autocomplete } from '@material-ui/lab';
+import { Autocomplete, createFilterOptions } from '@material-ui/lab';
+import { convertHyPhenStringToNormalString } from '../../utils/function'
 
 export const CustomTextField = (props) => {
     const { type, className } = props;
@@ -12,11 +13,15 @@ export const CustomTextField = (props) => {
     let input = null;
     switch (type) {
         case 'autocomplete':
+            const filterOptions = createFilterOptions({
+                limit: 5
+            })
             input = (
                 <Autocomplete
                     {...props}
-                    getOptionLabel={option => option}
+                    getOptionLabel={option => convertHyPhenStringToNormalString(option)}
                     id="combo-box-demo"
+                    filterOptions={filterOptions}
                     options={props.options || []}
                     renderInput={(params) => <TextField {...props} {...params} variant="outlined" />}
                 />
