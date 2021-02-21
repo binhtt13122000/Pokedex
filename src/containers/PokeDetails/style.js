@@ -21,11 +21,9 @@ export const useStyles = makeStyles(theme => ({
         maxWidth: 345,
         paddingBottom: '10px',
         [theme.breakpoints.down('sm')]: {
-            marginTop: '20px'
+            marginTop: '20px',
         },
         margin: '0 auto'
-        // backgroundColor: '#b2ebf2',
-        // paddingRight: '20px'
     },
     table: {
     },
