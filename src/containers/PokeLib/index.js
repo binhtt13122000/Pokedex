@@ -1,10 +1,11 @@
-import { Grid } from '@material-ui/core';
+import { Grid, useMediaQuery, useTheme } from '@material-ui/core';
 import Axios from 'axios';
 import React, { useContext, useEffect, useRef, useState } from 'react';
 import { useHistory, useLocation } from 'react-router';
 import { Loading } from '../../components/Loading';
 import { CustomPagination } from '../../components/Pagination';
 import { PokeCard } from '../../components/PokeCard';
+import { CustomTextField } from '../../components/TextField';
 import { LIMIT, POKE_ROOT_API } from '../../constants/poke';
 import PokeApi from '../../services/PokeApi';
 import { StoreContext } from '../../utils/context';
@@ -12,6 +13,7 @@ import { StoreContext } from '../../utils/context';
 export const PokeLib = () => {
     //state
     const [pokemonList, setPokemonList] = useState([]);
+    const [search, setSearch] = useState("");
     const [page, setPage] = useState({
         current: 1,
         previous: null,
@@ -25,6 +27,7 @@ export const PokeLib = () => {
     const location = useLocation();
     const history = useHistory();
     const { pokeStore } = useContext(StoreContext);
+    const isDesktop = useMediaQuery(useTheme().breakpoints.up('md'));
 
     //function
     const fetchPokemon = async (pageIndex, dexTotal) => {
@@ -78,7 +81,7 @@ export const PokeLib = () => {
     useEffect(() => {
         let params = new URLSearchParams(location.search);
         let search = params.get("page");
-        if(search == null){
+        if (search == null) {
             search = 1;
         }
         let pageIndex = parseInt(parseInt(search) - 1);
@@ -98,7 +101,28 @@ export const PokeLib = () => {
     }
 
     return <div>
-        <CustomPagination total={total} page={page.current} changePage={changePage} />
+        <Grid container direction="row" justify="center" alignItems="center" spacing={1}>
+            <Grid item xs={12} md={6}>
+                <CustomPagination total={total} page={page.current} changePage={changePage} />
+            </Grid>
+            <Grid item xs={12} md={6}>
+                <form onSubmit={e => history.push("/pokemon/" + search)}>
+                    <CustomTextField
+                        type="autocomplete"
+                        options={pokeStore.pokeNames || []}
+                        placeholder="Search Poke..."
+                        variant="outlined"
+                        size="small"
+                        color="primary"
+                        value={search}
+                        onChange={(event, newValue) => {
+                            setSearch(newValue)
+                        }}
+                        style={{'marginBottom': isDesktop ? '0px' : '20px'}}
+                    />
+                </form>
+            </Grid>
+        </Grid>
         <Grid container>
             {pokemonList.map(pokemon => {
                 return <Grid item key={pokemon.order} xs={12} sm={4}>
