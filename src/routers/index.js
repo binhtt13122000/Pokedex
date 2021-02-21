@@ -9,13 +9,6 @@ import { AbilityPage } from '../containers/AbilityPage';
 import { TypePage } from '../containers/TypePage';
 import { TypeDetails } from '../containers/TypeDetails';
 import { MoveDetail } from '../containers/MoveDetail';
-export const PublicRoute = ({ component: Component, ...rest }) => {
-    return <Route {...rest} render={
-        props => {
-            return <Component {...props} key={window.location.pathname} />
-        }}
-    />
-}
 
 const routes = [
     {
@@ -60,6 +53,17 @@ const routes = [
         component: PokeLib
     },
 ]
+
+//public route
+export const PublicRoute = ({ component: Component, ...rest }) => {
+    return <Route {...rest} render={
+        props => {
+            return <Component {...props} key={window.location.pathname} />
+        }}
+    />
+}
+
+//render
 export const RouterComponent = () => {
     return <Switch>
         {routes.map((route, index) => {
@@ -71,7 +75,6 @@ export const RouterComponent = () => {
                 />
             }
             return <PublicRoute key={index}
-                // exact={route.exact}
                 path={route.path}
                 component={route.component}
             />

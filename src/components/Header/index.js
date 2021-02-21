@@ -1,20 +1,31 @@
 import React, { useState } from 'react';
+
+import { useStyles } from './style';
+
 import AppBar from '@material-ui/core/AppBar';
+import Toolbar from '@material-ui/core/Toolbar';
 import IconButton from '@material-ui/core/IconButton';
 import MenuIcon from '@material-ui/icons/Menu';
-import Toolbar from '@material-ui/core/Toolbar';
-import { useStyles } from './style';
+
+import { useHistory } from 'react-router';
+
 import Logo from '../../assets/logo.png';
 import { CustomTextField } from '../TextField';
-import { useHistory } from 'react-router';
+
 export const Header = (props) => {
+    //variable
     const classes = useStyles();
-    const [search, setSearch] = useState("");
     const history = useHistory();
+
+    //state
+    const [search, setSearch] = useState("");
+
+    //function
     const submitHadler = (e) => {
-        // e.preventDefault();
         history.push("/pokemon/" + search);
     }
+
+    //render
     return (
         <AppBar position="fixed" className={classes.appBar}>
             <Toolbar>

@@ -1,23 +1,18 @@
 import React, { useLayoutEffect, useState, Fragment } from 'react';
-
 import { ListItem, useStyles } from './style';
-
-import { useTheme,List, Collapse, Drawer, ListItemIcon, ListItemText, Hidden } from '@material-ui/core';
+import { useTheme, List, Collapse, Drawer, ListItemIcon, ListItemText, Hidden } from '@material-ui/core';
 import ExpandLess from "@material-ui/icons/ExpandLess";
 import ExpandMore from "@material-ui/icons/ExpandMore";
 import Logo from '../../assets/logo.png';
-
 import { useHistory } from 'react-router';
-
-import Axios from 'axios';
-
 import { drawerItems } from './data';
-import { POKE_ROOT_API } from '../../constants/poke';
+import { CustomTextField } from '../TextField';
 
 export const DrawerComponent = (props) => {
     //state
     const [selectedIndex, setSelectedIndex] = useState(parseInt(sessionStorage.getItem("item")) || 1);
-    const [open, setOpen] = useState(false);
+    const [openChildren, setOpenChildren] = useState(false);
+    const [search, setSearch] = useState("");
 
     //variable
     const history = useHistory();
@@ -28,23 +23,16 @@ export const DrawerComponent = (props) => {
 
     //useEffect
     useLayoutEffect(() => {
-        const getRegions = async () => {
-            try {
-                const response = await Axios.get(`${POKE_ROOT_API}/region`);
-                if (response.status === 200) {
-                    const routers = response.data.results.map((item, index) => {
-                        return {
-                            id: (index + 1 + drawerItems.length),
-                            text: item.name.charAt(0).toUpperCase() + item.name.substring(1) ,
-                            to: `/regions/${item.name}`
-                        }
-                    })
-                    drawerItems[1].children = routers;
+        const getRegions = () => {
+            const routers = props.regions.map((item, index) => {
+                return {
+                    ...item, 
+                    id: (index + 1 + drawerItems.length),
                 }
-            } catch (e) {
-                console.log(e);
-            }
+            })
+            drawerItems[1].children = routers;
         }
+
         getRegions();
     }, [])
 
@@ -54,45 +42,57 @@ export const DrawerComponent = (props) => {
         setSelectedIndex(index);
         if (path) {
             history.push(path)
-            setOpen(false)
+            setOpenChildren(false)
             setSelectedIndex(fatherIndex)
         }
-        if(hasChildren){
-            setOpen(!open)
+        if (hasChildren) {
+            setOpenChildren(!openChildren)
         }
     };
 
     //reused component
+    const mobileHeaderDrawer = (
+        <Fragment>
+            <img className={classes.logo} src={Logo} width="200px" height="auto" alt="logo" />
+            <form onSubmit={e => history.push("/pokemon/" + search)}>
+                <CustomTextField placeholder="Search Poke..." variant="outlined" size="small" fullWidth color="primary" value={search} onChange={e => setSearch(e.target.value)} />
+            </form>
+        </Fragment>
+    )
+
+    const listDrawerItem = (
+        <Fragment>
+            {drawerItems.map((item, index) => (
+                <Fragment key={index}>
+                    <ListItem button onClick={e => handleListItemClick(e, item.id, item.to, item.children, item.id)} selected={selectedIndex === item.id}>
+                        <ListItemIcon>{item.icon}</ListItemIcon>
+                        <ListItemText primary={item.text} />
+                        {item.children ? (openChildren ? <ExpandLess /> : <ExpandMore />) : null}
+                    </ListItem>
+                    {item.children ? <Collapse in={openChildren} timeout="auto" unmountOnExit>
+                        <List component="div" disablePadding>
+                            {item.children.map((itemChildren) => {
+                                return (<ListItem
+                                    button
+                                    className={classes.nested}
+                                    selected={selectedIndex === itemChildren.id}
+                                    onClick={e => handleListItemClick(e, itemChildren.id, itemChildren.to, itemChildren.children, item.id)}
+                                    key={itemChildren.id}
+                                >
+                                    <ListItemIcon>{itemChildren.icon}</ListItemIcon>
+                                    <ListItemText primary={itemChildren.text} />
+                                </ListItem>)
+                            })}
+                        </List>
+                    </Collapse> : null}
+                </Fragment>
+            ))}
+        </Fragment>
+    )
     const drawer = (isMobile) => {
         return <div>
-            {isMobile ? <img className={classes.logo} src={Logo} width="200px" height="auto" alt="logo" /> : <div className={classes.toolbar} />}
-            <Fragment>
-                {drawerItems.map((item, index) => (
-                    <Fragment key={index}>
-                        <ListItem button onClick={e => handleListItemClick(e, item.id, item.to, item.children, item.id)} selected={selectedIndex === item.id}>
-                            <ListItemIcon>{item.icon}</ListItemIcon>
-                            <ListItemText primary={item.text} />
-                            {item.children ? (open ? <ExpandLess /> : <ExpandMore />) : null}
-                        </ListItem>
-                        {item.children ? <Collapse in={open} timeout="auto" unmountOnExit>
-                            <List component="div" disablePadding>
-                                {item.children.map((itemChildren) => {
-                                    return (<ListItem
-                                        button
-                                        className={classes.nested}
-                                        selected={selectedIndex === itemChildren.id}
-                                        onClick={e => handleListItemClick(e, itemChildren.id, itemChildren.to, itemChildren.children, item.id)}
-                                        key={itemChildren.id}
-                                    >
-                                        <ListItemIcon>{itemChildren.icon}</ListItemIcon>
-                                        <ListItemText primary={itemChildren.text} />
-                                    </ListItem>)
-                                })}
-                            </List>
-                        </Collapse> : null}
-                    </Fragment>
-                ))}
-            </Fragment>
+            {isMobile ? mobileHeaderDrawer : <div className={classes.toolbar} />}
+            {listDrawerItem}
         </div>
     }
 

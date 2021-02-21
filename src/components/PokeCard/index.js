@@ -1,62 +1,29 @@
-import { Grid, Card, makeStyles, Typography } from '@material-ui/core';
-import React, { useState } from 'react';
-import { TypeChip } from '../TypeChip';
+import React from 'react';
+import { Grid, Card, Typography } from '@material-ui/core';
 import ReplaceImg from '../../assets/whothatpokemon.png'
+import { TypeChip } from '../TypeChip';
 import { useHistory } from 'react-router';
-const useStyles = makeStyles(theme => ({
-    card: {
-        width: '100%',
-        minHeight: 200,
-        margin: '0 auto',
-        marginBottom: '20px',
-        paddingTop: '10px',
-        [theme.breakpoints.up('md')]: {
-            width: '80%'
-        },
-        cursor: 'pointer'
-    },
-    img: {
-        display: 'block',
-        margin: '0 auto',
-    },
-    caption: {
-        fontWeight: '600',
-        textAlign: 'center'
-    },
-    subtitle: {
-        fontWeight: '600',
-    },
-    groupTypeChip: {
-        "& > *": {
-            marginRight: '5px',
-            marginBottom: '5px'
-        }
-    },
-    marginTop: {
-        marginTop: '10px'
-    }
-}));
+import { useStyles } from './style';
+import { Image } from '../Image';
+import { convertHyPhenStringToNormalString } from '../../utils/function';
 
 export const PokeCard = (props) => {
+    //const
     const { height, weight, types, order, image, name } = props.pokemon;
     const history = useHistory();
+    const classes = useStyles();
 
-
-    const [ imgSrc, setImgSrc ] = useState({
-        src: image || ReplaceImg,
-        err: false
-    })
-
+    //function
     const showDetail = (e, name) => {
         history.push('/pokemon/' + name)
     }
 
-    const classes = useStyles();
+    //render
     return <Card className={classes.card} onClick={e => showDetail(e, name)}>
         <Grid container>
             <Grid item xs={6}>
-                <img className={classes.img} src={imgSrc.src} alt={name} width="100px" height="100px" />
-                <Typography className={`${classes.caption} ${classes.marginTop}`} variant="caption" display="block" gutterBottom>{name.toUpperCase()}</Typography>
+                <Image className={classes.img} src={image || ReplaceImg} alt={name} width="100px" height="100px" />
+                <Typography className={`${classes.caption} ${classes.marginTop}`} variant="caption" display="block" gutterBottom>{convertHyPhenStringToNormalString(name.toUpperCase())}</Typography>
             </Grid>
             <Grid item xs={6}>
                 <Typography className={`${classes.marginTop} ${classes.subtitle}`} variant="caption" display="block" gutterBottom>ORDER</Typography>

@@ -11,7 +11,7 @@ const useStyles = makeStyles({
 })
 export const NotFound = () => {
     const classes = useStyles();
-    const matches = useMediaQuery('(min-width:600px)')
+    const matches = useMediaQuery('(min-width:600px)');
     return <Grid className={classes.errorPage} container direction="row" justify="center" alignItems="center">
             <img width={matches ? '30%' : '80%'} height="auto" className={classes.img} src={NotFoundImg} alt="Not Found" />
     </Grid>

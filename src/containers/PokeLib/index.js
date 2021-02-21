@@ -1,14 +1,16 @@
 import { Grid } from '@material-ui/core';
 import Axios from 'axios';
-import React, { useEffect, useRef, useState } from 'react';
+import React, { useContext, useEffect, useRef, useState } from 'react';
 import { useHistory, useLocation } from 'react-router';
 import { Loading } from '../../components/Loading';
 import { CustomPagination } from '../../components/Pagination';
 import { PokeCard } from '../../components/PokeCard';
-import { LIMIT } from '../../constants/poke';
+import { LIMIT, POKE_ROOT_API } from '../../constants/poke';
 import PokeApi from '../../services/PokeApi';
+import { StoreContext } from '../../utils/context';
 
 export const PokeLib = () => {
+    //state
     const [pokemonList, setPokemonList] = useState([]);
     const [page, setPage] = useState({
         current: 1,
@@ -17,10 +19,14 @@ export const PokeLib = () => {
     })
     const [total, setTotal] = useState(0);
     const [loading, setLoading] = useState(false);
+
+    //variable
     const mounted = useRef(true);
     const location = useLocation();
     const history = useHistory();
+    const { pokeStore } = useContext(StoreContext);
 
+    //function
     const fetchPokemon = async (pageIndex, dexTotal) => {
         try {
             setLoading(true);
@@ -28,7 +34,7 @@ export const PokeLib = () => {
             if (LIMIT * (pageIndex + 1) > dexTotal) {
                 limit = dexTotal - (pageIndex) * LIMIT;
             }
-            const response = await Axios.get(`https://pokeapi.co/api/v2/pokemon?offset=${LIMIT * pageIndex}&limit=${limit}`)
+            const response = await Axios.get(`${POKE_ROOT_API}/pokemon?offset=${LIMIT * pageIndex}&limit=${limit}`)
             if (response.status === 200) {
                 if (mounted.current) {
                     setTotal(dexTotal || response.data.count);
@@ -61,12 +67,12 @@ export const PokeLib = () => {
     }
 
     const changePage = (e, value) => {
-        const nationDexTotal = parseInt(sessionStorage.getItem("total"));
+        const nationDexTotal = pokeStore.pokeTotal;
         history.push("/?page=" + value);
         fetchPokemon(value - 1, nationDexTotal)
     }
 
-
+    //useEffect
     useEffect(() => {
         let params = new URLSearchParams(location.search);
         let search = params.get("page");
@@ -74,7 +80,7 @@ export const PokeLib = () => {
             search = 1;
         }
         let pageIndex = parseInt(parseInt(search) - 1);
-        const nationDexTotal = parseInt(sessionStorage.getItem("total"));
+        const nationDexTotal = pokeStore.pokeTotal;
         mounted.current = true;
         fetchPokemon(pageIndex, nationDexTotal);
         return () => {
@@ -82,6 +88,7 @@ export const PokeLib = () => {
         }
     }, []);
 
+    //render
     if (loading) {
         return <div>
             <Loading />
