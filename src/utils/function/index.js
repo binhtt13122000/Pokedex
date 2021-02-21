@@ -71,6 +71,13 @@ export const convertHyPhenStringToNormalString = (text) => {
     }).join(" ");
 }
 
+export const convertNormalStringToHyphenString = (text) => {
+    const subStringArray = text.split(" ");
+    return subStringArray.map(subString => {
+        return subString.toLowerCase();
+    }).join("-");
+}
+
 export const getOfficialArt = (order) => {
     return `${OFFICIAL_ART_ROOT}${order}.png`
 }

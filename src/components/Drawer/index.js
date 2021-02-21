@@ -64,7 +64,7 @@ export const DrawerComponent = (props) => {
                     fullWidth color="primary"
                     value={search} 
                     onChange={(event, newValue) => {
-                        setSearch(newValue);
+                        setSearch(newValue)
                     }}
                     />
             </form>

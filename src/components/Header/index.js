@@ -8,6 +8,7 @@ import { useHistory } from 'react-router';
 import Logo from '../../assets/logo.png';
 import { CustomTextField } from '../TextField';
 import { useMediaQuery, useTheme } from '@material-ui/core';
+import { convertNormalStringToHyphenString } from '../../utils/function';
 
 export const Header = (props) => {
     //variable
@@ -21,7 +22,7 @@ export const Header = (props) => {
 
     //function
     const submitHadler = (e) => {
-        history.push("/pokemon/" + search);
+        history.push("/pokemon/" + convertNormalStringToHyphenString(search));
     }
     //render
     return (
