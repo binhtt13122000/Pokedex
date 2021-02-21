@@ -4,11 +4,14 @@ export const StoreContext = createContext(null);
 
 export default ({children}) => {
     const [pokeTotal, setPokeTotal] = useState(0);
+    const [pokeNames, setPokeNames] = useState([]);
 
     const store = {
         pokeStore: {
             pokeTotal,
-            setPokeTotal
+            pokeNames,
+            setPokeTotal,
+            setPokeNames
         },
     }
 

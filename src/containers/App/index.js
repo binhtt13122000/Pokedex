@@ -24,25 +24,48 @@ const App = () => {
   //useEffect
   useLayoutEffect(() => {
     mouted.current = true;
-    const loadFirst = async () => {
+    const loadPokemon = async () => {
       try {
         if (mouted.current) {
           setLoading(true)
         }
         const pokeResponse = await Axios.get(`${POKE_ROOT_API}/pokedex/1`);
-        const regionResponse = await Axios.get(`${POKE_ROOT_API}/region`);
         if (pokeResponse.status === 200) {
           pokeStore.setPokeTotal(pokeResponse.data['pokemon_entries'].length);
+          pokeStore.setPokeNames(pokeResponse.data['pokemon_entries'].map(entry => entry['pokemon_species'].name))
         }
+      } catch (ex) {
+        console.log(ex)
+      } finally {
+        if (mouted.current) {
+          setLoading(false);
+        }
+      }
+    }
+    loadPokemon();
+    return () => {
+      mouted.current = false;
+    }
+  }, [])
+
+  useLayoutEffect(() => {
+    mouted.current = true;
+    const loadRegions = async () => {
+      try {
+        if (mouted.current) {
+          setLoading(true)
+        }
+        const regionResponse = await Axios.get(`${POKE_ROOT_API}/region`);
         if (regionResponse.status === 200) {
-          const regions = regionResponse.data.results.map((item, index) => {
+          const regionList = regionResponse.data.results.map((item, index) => {
             return {
               text: convertHyPhenStringToNormalString(item.name),
               to: `/regions/${item.name}`
             }
           })
           if (mouted.current) {
-            setRegions(regions)
+            console.log("b")
+            setRegions(regionList)
           }
         }
       } catch (ex) {
@@ -53,11 +76,11 @@ const App = () => {
         }
       }
     }
-    loadFirst();
+    loadRegions();
     return () => {
       mouted.current = false;
     }
-  }, [])
+  }, []);
 
   //function
   const handleDrawerToggle = () => {

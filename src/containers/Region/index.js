@@ -99,7 +99,7 @@ export const Region = () => {
         return <Loading />
     }
     return <Container>
-        <Grid container spacing={2} className={classes.center} spacing={3}>
+        <Grid container className={classes.center} spacing={3}>
             <Grid item xs={12} md={3}>
                 <Image width="100%" height="auto" className={classes.banner} src={regionImg.img} alt={regionImg.name} />
             </Grid>
@@ -139,7 +139,17 @@ export const Region = () => {
                         </table>
                         <ul className={classes.chipWrapper}>
                             {region.pokedexes && region.pokedexes.map((pokedex, index) => {
-                                return <li key={index}><Chip className={classes.chip} onClick={e => setPokedexHandler(pokedex.name)} variant={selectedPokedex.name === pokedex.name ? "default" : "outlined"} clickable className={classes.btn} size="small" color="primary" label={convertHyPhenStringToNormalString(pokedex.name)} /></li>
+                                return <li key={index}>
+                                    <Chip 
+                                        className={`${classes.btn} ${classes.chip}`} 
+                                        onClick={e => setPokedexHandler(pokedex.name)} 
+                                        variant={selectedPokedex.name === pokedex.name ? "default" : "outlined"} 
+                                        clickable 
+                                        size="small" 
+                                        color="primary" 
+                                        label={convertHyPhenStringToNormalString(pokedex.name)} 
+                                    />
+                                </li>
                             })}
                         </ul>
                     </Container>

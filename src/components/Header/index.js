@@ -28,6 +28,10 @@ export const Header = (props) => {
         history.push("/pokemon/" + search);
     }
 
+    const goHomePage = e => {
+        history.push("/");
+        sessionStorage.setItem("item", 1);
+    } 
     //render
     return (
         <AppBar position="fixed" className={classes.appBar}>
@@ -42,11 +46,11 @@ export const Header = (props) => {
                     <MenuIcon />
                 </IconButton>
 
-                {isDesktop ? <img src={Logo} alt="logo" width="100px" height="auto" className={classes.logo} /> : null}                
+                {isDesktop ? <img src={Logo} alt="logo" width="100px" height="auto" className={classes.logo} onClick={goHomePage}/> : null}                
                 <div className={classes.flexGrowInput} />
                 {isDesktop ? <form onSubmit={submitHadler}>
                     <CustomTextField onChange={e => setSearch(e.target.value)} value={search} placeholder="Search Poke..." type="resize" className={classes.searchBar} />
-                </form> : <img src={Logo} alt="logo" width="100px" height="auto" className={classes.logo} />}
+                </form> : <img src={Logo} alt="logo" width="100px" height="auto" className={classes.logo} onClick={e => history.push("/")} />}
                 
             </Toolbar>
         </AppBar>

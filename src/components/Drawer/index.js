@@ -1,4 +1,4 @@
-import React, { useLayoutEffect, useState, Fragment } from 'react';
+import React, { useLayoutEffect, useState, Fragment, useContext } from 'react';
 import { ListItem, useStyles } from './style';
 import { useTheme, List, Collapse, Drawer, ListItemIcon, ListItemText, Hidden } from '@material-ui/core';
 import ExpandLess from "@material-ui/icons/ExpandLess";
@@ -7,6 +7,7 @@ import Logo from '../../assets/logo.png';
 import { useHistory } from 'react-router';
 import { drawerItems } from './data';
 import { CustomTextField } from '../TextField';
+import { StoreContext } from '../../utils/context';
 
 export const DrawerComponent = (props) => {
     //state
@@ -16,6 +17,7 @@ export const DrawerComponent = (props) => {
 
     //variable
     const history = useHistory();
+    const { pokeStore} = useContext(StoreContext);
     const { mobileOpen, handleDrawerToggle, window } = props;
     const container = window !== undefined ? () => window().document.body : undefined;
     const classes = useStyles();
@@ -32,9 +34,8 @@ export const DrawerComponent = (props) => {
             })
             drawerItems[1].children = routers;
         }
-
         getRegions();
-    }, [])
+    }, [props.regions])
 
     //function
     const handleListItemClick = (event, index, path, hasChildren, fatherIndex) => {
@@ -55,7 +56,16 @@ export const DrawerComponent = (props) => {
         <Fragment>
             <img className={classes.logo} src={Logo} width="200px" height="auto" alt="logo" />
             <form onSubmit={e => history.push("/pokemon/" + search)}>
-                <CustomTextField placeholder="Search Poke..." variant="outlined" size="small" fullWidth color="primary" value={search} onChange={e => setSearch(e.target.value)} />
+                <CustomTextField 
+                    type="autocomplete"
+                    options={pokeStore.pokeNames || []}
+                    placeholder="Search Poke..." 
+                    variant="outlined" 
+                    size="small" 
+                    fullWidth color="primary"
+                    // value={search} 
+                    // onChange={e => setSearch(e.target.value)} 
+                    />
             </form>
         </Fragment>
     )
