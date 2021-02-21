@@ -3,7 +3,7 @@ import Axios from 'axios';
 import React, { useState, useEffect, useRef } from 'react';
 import { TypeChip } from '../../components/TypeChip'
 import { Loading } from '../../components/Loading';
-import { calculatePokemonHightestStat, padLeadingZeros, calculatePokemonLowestStat, getListEvolution, getOrder, calculateCurrentOfMale, calculateCurrentOfFemale } from '../../utils/function';
+import { calculatePokemonHightestStat, padLeadingZeros, calculatePokemonLowestStat, getListEvolution, getOrder, calculateCurrentOfMale, calculateCurrentOfFemale, getOfficialArt } from '../../utils/function';
 import { Fragment } from 'react';
 import Arrow from '../../assets/arrow.png'
 import { useHistory, useLocation } from 'react-router';
@@ -11,6 +11,10 @@ import NotFound from '../../assets/notfound.jpg';
 import { BorderLinearProgress, useStyles } from './style';
 import { pictureNames } from './data';
 import { POKE_ROOT_API } from '../../constants/poke';
+import { PokemonImageSelector } from './PokemonImageSelector';
+import { PokedexData } from './PokedexData';
+import { TrainingData } from './TrainingData';
+import { BreedingData } from './BreedingData';
 
 export const PokeDetails = () => {
     //variable
@@ -43,7 +47,7 @@ export const PokeDetails = () => {
                     if (mounted.current) {
                         setPokeDetails(responseDetail.data);
                         const forms = responseDetail.data.varieties.map((variety, index) => {
-                            return { img: `https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/other/official-artwork/${getOrder(variety.pokemon.url)}.png`, isDefault: variety['is_default'], name: variety.pokemon.name, id: index }
+                            return { img: getOfficialArt(getOrder(variety.pokemon.url)), isDefault: variety['is_default'], name: variety.pokemon.name, id: index }
                         })
                         forms.sort((a, b) => {
                             return a.id - b.id;
@@ -71,7 +75,7 @@ export const PokeDetails = () => {
         }
     }
 
-    const setAthotherVersion = form => {
+    const setAthotherVersion = (e, form) => {
         setSelectedImg({ image: form.img, name: form.name })
         getPokemon(form.name, false);
     }
@@ -97,142 +101,20 @@ export const PokeDetails = () => {
         <Typography variant="h4" className={classes.caption}>{pokemon.name && pokemon.name.toUpperCase()} #{pokemon.id}</Typography>
         <Grid container>
             <Grid item xs={12} sm={4}>
-                {selectedImg === null ? pokemon.sprites && <img className={classes.img} src={pokemon.sprites.other['official-artwork']['front_default']} alt={pokemon.name} /> :
-                    <img onError={(e) => { e.target.onerror = null; e.target.src = NotFound }} className={classes.img} src={selectedImg.image} alt={pokemon.name} />
-                }
-                {selectedImg === null ? <Typography className={classes.caption} variant="body1">{pokemon.name}</Typography> : <Typography className={classes.caption} variant="body1">{selectedImg.name}</Typography>}
-                <Grid container>
-                    {forms && forms.map((form, index) => {
-                        let gridTotal = Math.floor(12 / forms.length);
-                        if (forms.length > 4) {
-                            gridTotal = 3
-                        }
-                        return <Grid item key={index} xs={gridTotal} style={{ 'marginBottom': '5px' }}><img onError={(e) => { e.target.src = NotFound }} onClick={e => setAthotherVersion(form)} width={forms.length > 2 ? "80%" : (forms.length === 2 ? "40%" : "30%")} className={classes.selectImg} src={form.img} alt={pokemon.name} /></Grid>
-                    })}
-                </Grid>
+                <PokemonImageSelector 
+                    pokemon={pokemon}
+                    forms={forms}
+                    selectImg={setAthotherVersion}
+                    selectedImg={selectedImg}
+                />
             </Grid>
             <Grid item xs={12} sm={4}>
-                <Paper elevation={3} className={classes.pokedexContainer}>
-                    <Container>
-                        <Typography className={classes.typography} variant="h6">Pokedex Data</Typography>
-                        <table className={classes.table}>
-                            <tbody>
-                                <tr>
-                                    <th className={classes.th}>No</th>
-                                    <td className={classes.td}><strong>#{pokemon.id}</strong></td>
-                                </tr>
-                                <tr>
-                                    <th className={classes.th}>Type</th>
-                                    <td className={classes.td}>
-                                        <span className={classes.groupTypeChip}>
-                                            {pokemon.types && pokemon.types.map((type, index) => {
-                                                return <TypeChip key={index} type={type.type.name} />
-                                            })}
-                                        </span>
-                                    </td>
-                                </tr>
-                                <tr>
-                                    <th className={classes.th}>Habitat</th>
-                                    <td className={classes.td}>{pokeDetails.habitat && pokeDetails.habitat.name}</td>
-                                </tr>
-                                <tr>
-                                    <th className={classes.th}>Height</th>
-                                    <td className={classes.td}>{pokemon.height && parseFloat(parseFloat(pokemon.height) / 10)} m (2'00")</td>
-                                </tr>
-                                <tr>
-                                    <th className={classes.th}>Weight</th>
-                                    <td className={classes.td}>{pokemon.weight && parseFloat(parseFloat(pokemon.weight) / 10)} kg (18.7lbs)</td>
-                                </tr>
-                                <tr>
-                                    <th className={classes.th}>Abilities</th>
-                                    <td className={classes.td}>
-                                        {pokemon.abilities && pokemon.abilities.map((ability, index) => {
-                                            return <div key={index}>{index + 1}. {ability.ability.name}{ability['is_hidden'] ? '(Hidden)' : ''}</div>
-                                        })}
-                                    </td>
-                                </tr>
-                                <tr>
-                                    <th className={classes.th}>Generation</th>
-                                    <td className={classes.td}>{pokeDetails.generation && pokeDetails.generation.name}</td>
-                                </tr>
-                                <tr>
-                                    <th className={classes.th}>Pokedex No.</th>
-                                    <td className={classes.td}>
-                                        {pokeDetails['pokedex_numbers'] && pokeDetails['pokedex_numbers'].map((item, index) => {
-                                            return <div key={index}><strong>{padLeadingZeros(item['entry_number'], 4)}</strong>. {item.pokedex.name} </div>
-                                        })}
-                                    </td>
-                                </tr>
-                            </tbody>
-                        </table>
-                    </Container>
-                </Paper>
+                <PokedexData pokemon={pokemon} pokeDetails={pokeDetails}/>
             </Grid>
             <Grid item xs={12} sm={4}>
-                <Paper elevation={3} className={classes.pokedexContainer}>
-                    <Container>
-                        <Typography className={classes.typography} variant="h6">Training</Typography>
-                        <table className={classes.table}>
-                            <tbody>
-                                <tr>
-                                    <th className={classes.th}>Catch Rate</th>
-                                    <td className={classes.td}>{pokeDetails['capture_rate']}</td>
-                                </tr>
-                                <tr>
-                                    <th className={classes.th}>Base Friend Ship</th>
-                                    <td className={classes.td}>{pokeDetails['base_happiness']}</td>
-                                </tr>
-                                <tr>
-                                    <th className={classes.th}>Base Exp.</th>
-                                    <td className={classes.td}>{pokemon['base_experience']}</td>
-                                </tr>
-                                <tr>
-                                    <th className={classes.th}>Growth Rate</th>
-                                    <td className={classes.td}>{pokeDetails['growth_rate'] && pokeDetails['growth_rate'].name}</td>
-                                </tr>
-                            </tbody>
-                        </table>
-                    </Container>
-                </Paper>
+                <TrainingData pokemon={pokemon} pokeDetails={pokeDetails} />
                 <div className={classes.marginTop}></div>
-                <Paper elevation={3} className={classes.pokedexContainer}>
-                    <Container>
-                        <Typography className={classes.typography} variant="h6">Breeding</Typography>
-                        <table className={classes.table}>
-                            <tbody>
-                                <tr>
-                                    <th className={classes.th}>Egg Groups</th>
-                                    <td className={classes.td}>{pokeDetails['egg_groups'] && pokeDetails['egg_groups'].map((item, index) => {
-                                        return <span key={index}>{item.name}, </span>
-                                    })}</td>
-                                </tr>
-                                <tr>
-                                    <th className={classes.th}>Gender</th>
-                                    <td className={classes.td}>
-                                        {
-                                            pokeDetails['gender_rate'] === -1 ? "No Gender" : (pokeDetails['gender_rate'] === 0 ?
-                                                <Fragment>
-                                                    <span className={classes.male}>
-                                                        Male: 100%</span>, <span className={classes.female}>Female: 0%
-                                                    </span>
-                                                </Fragment> :
-                                                <Fragment>
-                                                    <span className={classes.male}>
-                                                        Male: {pokeDetails['gender_rate'] && calculateCurrentOfMale(pokeDetails['gender_rate'])}%</span>, <span className={classes.female}>Female: {pokeDetails['gender_rate'] && calculateCurrentOfFemale(pokeDetails['gender_rate'])}%
-                                                    </span>
-                                                </Fragment>
-                                            )
-                                        }
-                                    </td>
-                                </tr>
-                                <tr>
-                                    <th className={classes.th}>Egg Circle</th>
-                                    <td className={classes.td}>{pokeDetails['hatch_counter']}</td>
-                                </tr>
-                            </tbody>
-                        </table>
-                    </Container>
-                </Paper>
+                <BreedingData pokeDetails={pokeDetails} />
             </Grid>
         </Grid>
         <Grid container className={classes.baseStatCaption}>

@@ -5,6 +5,7 @@ import { TypeChip } from '../TypeChip';
 import { useHistory } from 'react-router';
 import { useStyles } from './style';
 import { Image } from '../Image';
+import { convertHyPhenStringToNormalString } from '../../utils/function';
 
 export const PokeCard = (props) => {
     //const
@@ -22,7 +23,7 @@ export const PokeCard = (props) => {
         <Grid container>
             <Grid item xs={6}>
                 <Image className={classes.img} src={image || ReplaceImg} alt={name} width="100px" height="100px" />
-                <Typography className={`${classes.caption} ${classes.marginTop}`} variant="caption" display="block" gutterBottom>{name.toUpperCase()}</Typography>
+                <Typography className={`${classes.caption} ${classes.marginTop}`} variant="caption" display="block" gutterBottom>{convertHyPhenStringToNormalString(name.toUpperCase())}</Typography>
             </Grid>
             <Grid item xs={6}>
                 <Typography className={`${classes.marginTop} ${classes.subtitle}`} variant="caption" display="block" gutterBottom>ORDER</Typography>
