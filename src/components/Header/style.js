@@ -2,7 +2,7 @@ import { makeStyles } from "@material-ui/core";
 
 export const useStyles = makeStyles((theme) => ({
   appBar: {
-      zIndex: theme.zIndex.drawer + 1
+      zIndex: (theme.zIndex.drawer + 1) + " !important"
       // width: `calc(100% - ${drawerWidth}px)`,
       // marginLeft: drawerWidth,
   },
