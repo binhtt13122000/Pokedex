@@ -2,7 +2,7 @@ import { Container, Grid, Typography, useMediaQuery } from '@material-ui/core';
 import Axios from 'axios';
 import React, { useState, useEffect, useRef } from 'react';
 import { Loading } from '../../components/Loading';
-import { getListEvolution, getOrder, calculateCurrentOfMale, getOfficialArt } from '../../utils/function';
+import { getListEvolution, getOrder, getOfficialArt } from '../../utils/function';
 import { useHistory, useLocation } from 'react-router';
 import { useStyles } from './style';
 import { pictureNames } from './data';

@@ -1,4 +1,4 @@
-import { Container, FormControlLabel, Grid, makeStyles, Paper, Switch, Typography, useTheme } from '@material-ui/core';
+import { Container, FormControlLabel, Grid, Switch, Typography, useTheme } from '@material-ui/core';
 import Axios from 'axios';
 import React, { useEffect, useRef, useState } from 'react';
 import { Loading } from '../../components/Loading'

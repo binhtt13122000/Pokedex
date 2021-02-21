@@ -51,6 +51,8 @@ export const PokeLib = () => {
                             return item.type.name
                         })
                         return { name: pokeData.name, image: pokeData.sprites.other['official-artwork']['front_default'], height: pokeData.height, weight: pokeData.weight, order: pokeData.id, types: types }
+                    } else {
+                        return null;
                     }
                 });
                 if (mounted.current) {
