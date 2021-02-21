@@ -20,7 +20,7 @@ export const EvolutionChart = ({ evolutionChains, matches, }) => {
                         if (onlyOne) {
                             onlyOne = false;
                             return <Grid item xs={6} md={3}>
-                                <Image width={matches ? '60%' : '50%'} height="auto" className={classes.evolveImg} src={item['start'].image} alt={item['start'].name} />
+                                <Image width={matches ? '60%' : '80%'} height="auto" className={classes.evolveImg} src={item['start'].image} alt={item['start'].name} />
                                 <div className={classes.imgSub}>{item['start'].name}</div>
                             </Grid>
                         } else {
