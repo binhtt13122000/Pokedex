@@ -1,5 +1,5 @@
 import React, { useEffect, useRef, useState } from 'react';
-import { Accordion, AccordionActions, AccordionDetails, AccordionSummary, Button, Container, Dialog, DialogContent, DialogTitle, Grid, InputAdornment, makeStyles, Paper, Slide, TextField, Typography, useMediaQuery, useTheme } from '@material-ui/core';
+import { Accordion, AccordionActions, AccordionDetails, AccordionSummary, Button, Container, Dialog, Grid, InputAdornment, Paper, TextField, Typography, useMediaQuery, useTheme } from '@material-ui/core';
 import ExpandMore from "@material-ui/icons/ExpandMore";
 import PokeBall from '../../assets/pokeball.svg';
 import { useHistory, useLocation } from 'react-router';
@@ -9,7 +9,6 @@ import { Loading } from '../../components/Loading';
 import { convertHyPhenStringToNormalString, getFrontDefaultImage, getOrder } from '../../utils/function';
 import { CustomPagination } from '../../components/Pagination';
 import { Image } from '../../components/Image';
-import NotFound from '../../assets/notfound.jpg';
 import { Transition, useStyles } from './style';
 
 
