@@ -1,64 +1,28 @@
+import React, { useEffect, useRef, useState } from 'react';
 import { Accordion, AccordionActions, AccordionDetails, AccordionSummary, Button, Container, Dialog, DialogContent, DialogTitle, Grid, InputAdornment, makeStyles, Paper, Slide, TextField, Typography, useMediaQuery, useTheme } from '@material-ui/core';
 import ExpandMore from "@material-ui/icons/ExpandMore";
 import PokeBall from '../../assets/pokeball.svg';
-import React, { forwardRef, useEffect, useRef, useState } from 'react';
 import { useHistory, useLocation } from 'react-router';
 import Axios from 'axios';
-import { LIMIT_ABILITY } from '../../constants/poke'
+import { LIMIT_ABILITY, POKE_ROOT_API } from '../../constants/poke'
 import { Loading } from '../../components/Loading';
-import { getOrder } from '../../utils/function';
+import { convertHyPhenStringToNormalString, getFrontDefaultImage, getOrder } from '../../utils/function';
 import { CustomPagination } from '../../components/Pagination';
+import { Image } from '../../components/Image';
 import NotFound from '../../assets/notfound.jpg';
+import { Transition, useStyles } from './style';
 
-const Transition = forwardRef(function Transition(props, ref) {
-    return <Slide direction="up" ref={ref} {...props} />;
-});
 
-const useStyles = makeStyles((theme) => ({
-    textFiled: {
-        display: 'block',
-        margin: '0 auto'
-    },
-    accordionContainer: {
-        width: '100%',
-    },
-    heading: {
-        fontSize: theme.typography.pxToRem(15),
-        flexBasis: '33.33%',
-        flexShrink: 0,
-    },
-    secondaryHeading: {
-        fontSize: theme.typography.pxToRem(15),
-        color: theme.palette.text.secondary,
-    },
-    listPoke: {
-        display: 'block',
-        width: '80%',
-        margin: '0 auto',
-        marginTop: '20px',
-        minHeight: '530px',
-    },
-    listPokeContainer: {
-        display: 'none',
-        [theme.breakpoints.up('md')]: {
-            display: 'block'
-        }
-    },
-    img: {
-        display: 'block',
-        margin: '0 auto',
-        cursor: 'pointer',
-        marginTop: '10px'
-    },
-    center: {
-        margin: 'auto',
-        marginTop: '220px'
-    }
-}));
+
 export const AbilityPage = (props) => {
+    //variable
     const classes = useStyles();
     const location = useLocation();
     const history = useHistory();
+    const mounted = useRef(true);
+    const isMobile = useMediaQuery(useTheme().breakpoints.down("md"));
+
+    //state
     const [expanded, setExpanded] = useState(false);
     const [loading, setLoading] = useState(false);
     const [abilities, setAbilities] = useState([]);
@@ -73,13 +37,11 @@ export const AbilityPage = (props) => {
     const [search, setSearch] = useState("");
     const [message, setMessage] = useState("Select an ability first!");
 
-    const mounted = useRef(true);
-    const isMobile = useMediaQuery(useTheme().breakpoints.down("md"));
-
+    //function
     const loadAbility = async (pageIndex) => {
         try {
             setLoading(true)
-            const response = await Axios.get(`https://pokeapi.co/api/v2/ability?limit=${LIMIT_ABILITY}&offset=${LIMIT_ABILITY * pageIndex}`);
+            const response = await Axios.get(`${POKE_ROOT_API}/ability?limit=${LIMIT_ABILITY}&offset=${LIMIT_ABILITY * pageIndex}`);
             if (response.status === 200) {
                 if (mounted.current) {
                     setTotal(response.data.count);
@@ -111,19 +73,6 @@ export const AbilityPage = (props) => {
             }
         }
     }
-    useEffect(() => {
-        let params = new URLSearchParams(location.search);
-        let search = params.get("page");
-        if (search == null) {
-            search = 1;
-        }
-        let pageIndex = parseInt(search - 1);
-        loadAbility(pageIndex);
-        mounted.current = true;
-        return () => {
-            mounted.current = false;
-        }
-    }, [])
 
     const handleChange = (panel) => (event, isExpanded) => {
         setExpanded(isExpanded ? panel : false);
@@ -150,14 +99,30 @@ export const AbilityPage = (props) => {
             setMessage("Ability is not available");
         }
     }
+
+    //use effect
+    useEffect(() => {
+        let params = new URLSearchParams(location.search);
+        let search = params.get("page");
+        if (search == null) {
+            search = 1;
+        }
+        let pageIndex = parseInt(search - 1);
+        loadAbility(pageIndex);
+        mounted.current = true;
+        return () => {
+            mounted.current = false;
+        }
+    }, [])
+
     const paper = (
         <Paper elevation={isMobile ? 0 : 3} className={classes.listPoke}>
             <Grid container>
                 {listPoke.length === 0 ? <Typography className={classes.center} variant="subtitle1">{message}</Typography> : listPoke.map((poke, index) => {
                     if (poke.pokemon) {
                         return <Grid key={index} item md={3} xs={6}>
-                            <img width="80%" height="auto" onClick={e => history.push("/pokemon/" + poke.pokemon.name)} onError={(e) => { e.target.onerror = null; e.target.src = NotFound }} className={classes.img} src={`https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/${getOrder(poke.pokemon.url)}.png`} alt={poke.pokemon.name} />
-                            <p style={{ 'textAlign': 'center' }}>{poke.pokemon.name}</p>
+                            <Image width="80%" height="auto" onClick={e => history.push("/pokemon/" + poke.pokemon.name)} className={classes.img} src={getFrontDefaultImage(getOrder(poke.pokemon.url))} alt={poke.pokemon.name} />
+                            <p style={{ 'textAlign': 'center' }}>{convertHyPhenStringToNormalString(poke.pokemon.name)}</p>
                         </Grid>
                     }
                     return null;
@@ -209,7 +174,7 @@ export const AbilityPage = (props) => {
                                 aria-controls="panel1bh-content"
                                 id="panel1bh-header"
                             >
-                                <Typography className={classes.heading}>{ability.name && (ability.name.charAt(0).toUpperCase() + ability.name.slice(1))}</Typography>
+                                <Typography className={classes.heading}>{ability.name && convertHyPhenStringToNormalString(ability.name)}</Typography>
                                 <Typography className={classes.secondaryHeading}>Generation: {ability.generation}</Typography>
                             </AccordionSummary>
                             <AccordionDetails>
