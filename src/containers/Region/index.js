@@ -10,6 +10,7 @@ import { convertHyPhenStringToNormalString, getFrontDefaultImage, getOrder } fro
 import { useStyles } from './style';
 import { Image } from '../../components/Image'
 import './style.css';
+import { NotFound } from '../NotFound';
 
 export const Region = () => {
     //state
@@ -20,6 +21,7 @@ export const Region = () => {
         name: "",
         listPoke: []
     });
+    const [error, setError] = useState(false);
 
     //variable
     const mounted = useRef(true);
@@ -56,7 +58,9 @@ export const Region = () => {
                 }
             }
         } catch (ex) {
-            history.push("/not_found")
+            if(mounted.current){
+                setError(true);
+            }
         } finally {
             if (mounted.current) {
                 setLoading(false);
@@ -97,6 +101,9 @@ export const Region = () => {
     //render
     if (loading) {
         return <Loading />
+    }
+    if(error){
+        return <NotFound />
     }
     return <Container>
         <Grid container className={classes.center} spacing={3}>

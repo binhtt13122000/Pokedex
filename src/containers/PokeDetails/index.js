@@ -2,8 +2,9 @@ import { Container, Grid, Typography, useMediaQuery } from '@material-ui/core';
 import Axios from 'axios';
 import React, { useState, useEffect, useRef } from 'react';
 import { Loading } from '../../components/Loading';
+import { NotFound } from '../NotFound'
 import { getListEvolution, getOrder, getOfficialArt, convertHyPhenStringToNormalString } from '../../utils/function';
-import { useHistory, useLocation } from 'react-router';
+import { useLocation } from 'react-router';
 import { useStyles } from './style';
 import { pictureNames } from './data';
 import { POKE_ROOT_API } from '../../constants/poke';
@@ -19,7 +20,6 @@ export const PokeDetails = () => {
     const classes = useStyles();
     const location = useLocation();
     const matches = useMediaQuery('(min-width:600px)');
-    const history = useHistory();
     const mounted = useRef(true);
     //state
     const [pokemon, setPokemon] = useState({});
@@ -28,6 +28,7 @@ export const PokeDetails = () => {
     const [evolutionChains, setEvolutionChain] = useState([]);
     const [selectedImg, setSelectedImg] = useState(null);
     const [loading, setLoading] = useState(false);
+    const [error, setError] = useState(false);
 
     //function
     const getPokemon = async (name, isNeedLoading) => {
@@ -98,7 +99,9 @@ export const PokeDetails = () => {
                     }
                 }
             } catch (ex) {
-                history.push('/not_found')
+                if(mounted.current){
+                    setError(true);
+                }
             }
         } finally {
             if (mounted.current) {
@@ -128,6 +131,9 @@ export const PokeDetails = () => {
         return <div>
             <Loading />
         </div>
+    }
+    if(error){
+        return <NotFound />
     }
     return <Container>
         <Typography variant="h4" className={classes.caption}>{pokemon.name && convertHyPhenStringToNormalString(pokemon.name).toUpperCase()} #{pokemon.id}</Typography>

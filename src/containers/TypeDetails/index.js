@@ -9,6 +9,7 @@ import { convertHyPhenStringToNormalString, getOrder } from '../../utils/functio
 import ExpandMore from "@material-ui/icons/ExpandMore";
 import { useStyles } from './style';
 import { POKE_ROOT_API } from '../../constants/poke';
+import { NotFound } from '../NotFound';
 
 export const TypeDetails = () => {
     //state
@@ -18,6 +19,7 @@ export const TypeDetails = () => {
         type: "",
         poke: ""
     });
+    const [error, setError] = useState(false);
     const [display, setDisplay] = useState(false);
     //variable
     const mounted = useRef(true);
@@ -42,7 +44,9 @@ export const TypeDetails = () => {
                     }
                 }
             } catch (ex) {
-                history.push("/not_found");
+                if(mounted.current){
+                    setError(true);
+                }
             } finally {
                 if (mounted.current) {
                     setLoading(false);
@@ -82,7 +86,9 @@ export const TypeDetails = () => {
     if (loading) {
         return <Loading />
     }
-
+    if(error){
+        return <NotFound />
+    }
     return <Container>
         <Container>
             <Typography variant="h4" style={{ 'color': type.name && theme.palette.types[type.name].backgroundColor }} align="center"># {type.name && type.name.charAt(0).toUpperCase() + type.name.slice(1)}</Typography>

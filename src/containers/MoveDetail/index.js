@@ -7,7 +7,7 @@ import { Loading } from '../../components/Loading';
 import { Image } from '../../components/Image';
 import { TypeChip } from '../../components/TypeChip';
 import { convertHyPhenStringToNormalString, getOrder } from '../../utils/function';
-import NotFound from '../../assets/notfound.jpg';
+import { NotFound } from '../NotFound';
 import { useStyles } from './style';
 import { POKE_ROOT_API } from '../../constants/poke';
 
@@ -15,6 +15,7 @@ export const MoveDetail = () => {
     //state
     const [move, setMove] = useState({});
     const [loading, setLoading] = useState(false);
+    const [error, setError] = useState(false);
     //variable
     const mounted = useRef(true);
     const history = useHistory();
@@ -37,7 +38,9 @@ export const MoveDetail = () => {
                     }
                 }
             } catch (ex) {
-                history.push("/not_found")
+                if(mounted.current){
+                    setError(true);
+                }
             } finally {
                 if (mounted.current) {
                     setLoading(false);
@@ -54,7 +57,9 @@ export const MoveDetail = () => {
     if (loading) {
         return <Loading />
     }
-
+    if(error){
+        return <NotFound />
+    }
     return <Container>
         <Grid container spacing={3}>
             <Grid item xs={12} md={4}>
@@ -187,7 +192,7 @@ export const MoveDetail = () => {
             <Grid container spacing={6}>
                 {move['learned_by_pokemon'] && move['learned_by_pokemon'].map((poke, index) => {
                     return <Grid item key={index} xs={6} md={2}>
-                        <Image onError={(e) => { e.target.onerror = null; e.target.src = NotFound }} className={classes.img} onClick={e => history.push("/pokemon/" + poke.name)} width="80%" height="auto" src={`https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/${getOrder(poke.url)}.png`} alt={poke.name} />
+                        <Image className={classes.img} onClick={e => history.push("/pokemon/" + poke.name)} width="80%" height="auto" src={`https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/${getOrder(poke.url)}.png`} alt={poke.name} />
                         <p style={{ 'textAlign': 'center' }}>{convertHyPhenStringToNormalString(poke.name)}</p>
                     </Grid>
                 })}

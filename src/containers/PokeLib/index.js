@@ -9,6 +9,7 @@ import { CustomTextField } from '../../components/TextField';
 import { LIMIT, POKE_ROOT_API } from '../../constants/poke';
 import PokeApi from '../../services/PokeApi';
 import { StoreContext } from '../../utils/context';
+import { NotFound } from '../NotFound';
 
 export const PokeLib = () => {
     //state
@@ -21,6 +22,7 @@ export const PokeLib = () => {
     })
     const [total, setTotal] = useState(0);
     const [loading, setLoading] = useState(false);
+    const [error, setError] = useState(false);
 
     //variable
     const mounted = useRef(true);
@@ -63,7 +65,9 @@ export const PokeLib = () => {
                 }
             }
         } catch (ex) {
-            console.log(ex)
+            if(mounted.current){
+                setError(true);
+            }
         } finally {
             if (mounted.current) {
                 setLoading(false);
@@ -87,7 +91,11 @@ export const PokeLib = () => {
         let pageIndex = parseInt(parseInt(search) - 1);
         const nationDexTotal = pokeStore.pokeTotal;
         mounted.current = true;
-        fetchPokemon(pageIndex, nationDexTotal);
+        if(Math.ceil(nationDexTotal / LIMIT ) < (pageIndex + 1)){
+            setError(true);
+        } else {
+            fetchPokemon(pageIndex, nationDexTotal);
+        }
         return () => {
             mounted.current = false;
         }
@@ -99,15 +107,18 @@ export const PokeLib = () => {
             <Loading />
         </div>
     }
-
+    if(error){
+        return <NotFound />
+    }
     return <div>
         <Grid container direction="row" justify="center" alignItems="center" spacing={1}>
             <Grid item xs={12} md={6}>
                 <CustomPagination total={total} page={page.current} changePage={changePage} />
             </Grid>
             <Grid item xs={12} md={6}>
-                <form onSubmit={e => history.push("/pokemon/" + search)}>
+                <form style={{'width': isDesktop ? '60%' : '100%', margin: '0 auto'}} onSubmit={e => history.push("/pokemon/" + search)}>
                     <CustomTextField
+                        fullWidth
                         type="autocomplete"
                         options={pokeStore.pokeNames || []}
                         placeholder="Search Poke..."
