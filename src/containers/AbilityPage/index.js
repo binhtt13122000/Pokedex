@@ -10,6 +10,7 @@ import { convertHyPhenStringToNormalString, getFrontDefaultImage, getOrder } fro
 import { CustomPagination } from '../../components/Pagination';
 import { Image } from '../../components/Image';
 import { Transition, useStyles } from './style';
+import { NotFound } from '../NotFound';
 
 
 
@@ -35,6 +36,7 @@ export const AbilityPage = (props) => {
     const [openDialog, setOpenDialog] = useState(false);
     const [search, setSearch] = useState("");
     const [message, setMessage] = useState("Select an ability first!");
+    const [error, setError] = useState(false);
 
     //function
     const loadAbility = async (pageIndex) => {
@@ -42,6 +44,10 @@ export const AbilityPage = (props) => {
             setLoading(true)
             const response = await Axios.get(`${POKE_ROOT_API}/ability?limit=${LIMIT_ABILITY}&offset=${LIMIT_ABILITY * pageIndex}`);
             if (response.status === 200) {
+                if(Math.ceil(response.data.count / LIMIT_ABILITY) < (pageIndex + 1)){
+                    setError(true);
+                    return;
+                }
                 if (mounted.current) {
                     setTotal(response.data.count);
                     setPage({ ...page, next: response.data.next, previous: response.data.previous, current: pageIndex + 1 })
@@ -51,7 +57,8 @@ export const AbilityPage = (props) => {
                 })
                 const listResponse = await Promise.all(promises);
                 const abilities = listResponse.map(res => {
-                    const effectEntry = res.data['effect_entries'].find(item => item.language.name === 'en').effect;
+                    const item = res.data['effect_entries'].find(item => item.language.name === 'en');
+                    const effectEntry = item === undefined ? null : item.effect;
                     return {
                         name: res.data.name,
                         pokemon: res.data.pokemon,
@@ -65,7 +72,10 @@ export const AbilityPage = (props) => {
                 }
             }
         } catch (ex) {
-            history.push("/not_found");
+            console.log(ex)
+            if(mounted.current){
+                setError(true);
+            }
         } finally {
             if (mounted.current) {
                 setLoading(false);
@@ -92,6 +102,11 @@ export const AbilityPage = (props) => {
         try {
             const response = await Axios.get("https://pokeapi.co/api/v2/ability/" + search);
             if(response.status === 200){
+                const id = response.data.id;
+                const page = Math.floor(parseInt(id) / LIMIT_ABILITY);
+                history.push("/abilities?page=" + (page + 1));
+                loadAbility(page);
+                setExpanded(id);
                 setListPoke(response.data.pokemon);
             }
         } catch (ex){
@@ -107,6 +122,9 @@ export const AbilityPage = (props) => {
             search = 1;
         }
         let pageIndex = parseInt(search - 1);
+        if(pageIndex < 0 && params.get("page") !== null){
+            setError(true);
+        }
         loadAbility(pageIndex);
         mounted.current = true;
         return () => {
@@ -132,6 +150,9 @@ export const AbilityPage = (props) => {
 
     if (loading) {
         return <div><Loading /></div>
+    }
+    if(error){
+        return <NotFound />
     }
     return <Container>
         <Grid container>
@@ -164,7 +185,7 @@ export const AbilityPage = (props) => {
         </Grid>
         <Grid container>
             <Grid item xs={12} md={6}>
-                <CustomPagination total={total} page={page.current} changePage={changePage} />
+                <CustomPagination total={total} page={page.current} ability changePage={changePage} />
                 <div className={classes.accordionContainer}>
                     {abilities && abilities.map((ability, index) => {
                         return <Accordion key={index} expanded={expanded === ability.id} onChange={handleChange(ability.id)}>

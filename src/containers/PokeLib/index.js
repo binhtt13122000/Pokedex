@@ -91,7 +91,7 @@ export const PokeLib = () => {
         let pageIndex = parseInt(parseInt(search) - 1);
         const nationDexTotal = pokeStore.pokeTotal;
         mounted.current = true;
-        if(Math.ceil(nationDexTotal / LIMIT ) < (pageIndex + 1)){
+        if((Math.ceil(nationDexTotal / LIMIT ) < (pageIndex + 1)) || (pageIndex < 0 && params.get("page") !== null)){
             setError(true);
         } else {
             fetchPokemon(pageIndex, nationDexTotal);
