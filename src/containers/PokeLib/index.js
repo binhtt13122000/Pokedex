@@ -103,7 +103,7 @@ export const PokeLib = () => {
     }, []);
 
     //render
-    if (loading) {
+    if (loading || total === 0) {
         return <div>
             <Loading />
         </div>
