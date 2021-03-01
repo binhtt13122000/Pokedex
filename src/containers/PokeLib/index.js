@@ -46,7 +46,7 @@ export const PokeLib = () => {
                     setPage({ ...page, next: response.data.next, previous: response.data.previous, current: pageIndex + 1 })
                 }
                 const pokePromises = response.data.results.map(async function (pokeItem) {
-                    return await PokeApi.getPokemonByName(pokeItem.name);
+                    return await Axios.get(pokeItem.url);
                 })
                 const listPokeResponse = await Promise.all(pokePromises);
                 const pokemons = listPokeResponse.map(response => {

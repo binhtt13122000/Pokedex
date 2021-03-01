@@ -53,7 +53,7 @@ export const AbilityPage = (props) => {
                     setPage({ ...page, next: response.data.next, previous: response.data.previous, current: pageIndex + 1 })
                 }
                 const promises = response.data.results.map(async item => {
-                    return await Axios.get(item.url);
+                    return await Axios.get(item.url.slice(0, -1));
                 })
                 const listResponse = await Promise.all(promises);
                 const abilities = listResponse.map(res => {

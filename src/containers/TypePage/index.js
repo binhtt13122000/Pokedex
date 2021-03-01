@@ -28,7 +28,7 @@ export const TypePage = () => {
             const response = await Axios.get(`${POKE_ROOT_API}/type`);
             if (response.status === 200) {
                 const listResponse = await Promise.all(response.data.results.map(async item => {
-                    return await Axios.get(item.url);
+                    return await Axios.get(item.url.slice(0, -1));
                 }));
 
                 const typeDetails = listResponse.map(response => {
