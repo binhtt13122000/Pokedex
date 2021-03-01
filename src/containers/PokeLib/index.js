@@ -42,7 +42,7 @@ export const PokeLib = () => {
             const response = await Axios.get(`${POKE_ROOT_API}/pokemon?offset=${LIMIT * pageIndex}&limit=${limit}`)
             if (response.status === 200) {
                 if (mounted.current) {
-                    setTotal(dexTotal || response.data.count);
+                    setTotal(dexTotal);
                     setPage({ ...page, next: response.data.next, previous: response.data.previous, current: pageIndex + 1 })
                 }
                 const pokePromises = response.data.results.map(async function (pokeItem) {
