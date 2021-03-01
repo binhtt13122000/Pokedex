@@ -7,11 +7,10 @@ import { CustomPagination } from '../../components/Pagination';
 import { PokeCard } from '../../components/PokeCard';
 import { CustomTextField } from '../../components/TextField';
 import { LIMIT, POKE_ROOT_API } from '../../constants/poke';
-import PokeApi from '../../services/PokeApi';
 import { StoreContext } from '../../utils/context';
 import { NotFound } from '../NotFound';
 
-export const PokeLib = () => {
+export const PokeLib = (props) => {
     //state
     const [pokemonList, setPokemonList] = useState([]);
     const [search, setSearch] = useState("");
@@ -32,18 +31,18 @@ export const PokeLib = () => {
     const isDesktop = useMediaQuery(useTheme().breakpoints.up('md'));
 
     //function
-    const fetchPokemon = async (pageIndex, dexTotal) => {
+    const fetchPokemon = async (pageIndex) => {
         try {
             setLoading(true);
-            let limit = LIMIT;
-            if (LIMIT * (pageIndex + 1) > dexTotal) {
-                limit = dexTotal - (pageIndex) * LIMIT;
-            }
-            const response = await Axios.get(`${POKE_ROOT_API}/pokemon?offset=${LIMIT * pageIndex}&limit=${limit}`)
+            const response = await Axios.get(`${POKE_ROOT_API}/pokemon?offset=${LIMIT * pageIndex}&limit=${LIMIT}`)
             if (response.status === 200) {
                 if (mounted.current) {
-                    setTotal(dexTotal);
-                    setPage({ ...page, next: response.data.next, previous: response.data.previous, current: pageIndex + 1 })
+                    if(pageIndex * LIMIT > response.data.count){
+                        setError(false)
+                    } else {
+                        setTotal(prev => response.data.count)
+                        setPage({ ...page, next: response.data.next, previous: response.data.previous, current: pageIndex + 1 })
+                    }
                 }
                 const pokePromises = response.data.results.map(async function (pokeItem) {
                     return await Axios.get(pokeItem.url);
@@ -65,7 +64,7 @@ export const PokeLib = () => {
                 }
             }
         } catch (ex) {
-            if(mounted.current){
+            if (mounted.current) {
                 setError(true);
             }
         } finally {
@@ -76,48 +75,47 @@ export const PokeLib = () => {
     }
 
     const changePage = (e, value) => {
-        const nationDexTotal = pokeStore.pokeTotal;
+        const nationDexTotal = props.total;
         history.push("/?page=" + value);
         fetchPokemon(value - 1, nationDexTotal)
     }
 
     //useEffect
     useEffect(() => {
+        console.log(props)
         let params = new URLSearchParams(location.search);
         let search = params.get("page");
         if (search == null) {
             search = 1;
         }
-        let pageIndex = parseInt(parseInt(search) - 1);
-        const nationDexTotal = pokeStore.pokeTotal;
-        mounted.current = true;
-        if((nationDexTotal !== 0 && (Math.ceil(nationDexTotal / LIMIT ) < (pageIndex + 1))) || (pageIndex < 0 && params.get("page") !== null)){
-            console.log(nationDexTotal);
+        if(parseInt(search) <= 0){
             setError(true);
-        } else {
-            fetchPokemon(pageIndex, nationDexTotal);
+            return;
         }
+        let pageIndex = parseInt(parseInt(search) - 1);
+        mounted.current = true;
+        fetchPokemon(pageIndex);
         return () => {
             mounted.current = false;
         }
     }, []);
 
     //render
-    if (loading || total === 0) {
+    if (loading) {
         return <div>
             <Loading />
         </div>
     }
-    if(error){
+    if (error) {
         return <NotFound />
-    }
-    return <div>
+    } else {
+        return <div>
         <Grid container direction="row" justify="center" alignItems="center" spacing={1}>
             <Grid item xs={12} md={6}>
                 <CustomPagination total={total} page={page.current} changePage={changePage} />
             </Grid>
             <Grid item xs={12} md={6}>
-                <form style={{'width': isDesktop ? '60%' : '100%', margin: '0 auto'}} onSubmit={e => history.push("/pokemon/" + search)}>
+                <form style={{ 'width': isDesktop ? '60%' : '100%', margin: '0 auto' }} onSubmit={e => history.push("/pokemon/" + search)}>
                     <CustomTextField
                         fullWidth
                         type="autocomplete"
@@ -130,7 +128,7 @@ export const PokeLib = () => {
                         onChange={(event, newValue) => {
                             setSearch(newValue)
                         }}
-                        style={{'marginBottom': isDesktop ? '0px' : '20px'}}
+                        style={{ 'marginBottom': isDesktop ? '0px' : '20px' }}
                     />
                 </form>
             </Grid>
@@ -143,4 +141,6 @@ export const PokeLib = () => {
             })}
         </Grid>
     </div>
+    }
+
 }

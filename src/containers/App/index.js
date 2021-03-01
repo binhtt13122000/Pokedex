@@ -34,7 +34,6 @@ const App = () => {
         }
         const pokeResponse = await Axios.get(`${POKE_ROOT_API}/pokedex/1`);
         if (pokeResponse.status === 200) {
-          pokeStore.setPokeTotal(pokeResponse.data['pokemon_entries'].length);
           pokeStore.setPokeNames(pokeResponse.data['pokemon_entries'].map(entry => entry['pokemon_species'].name))
         }
       } catch (ex) {

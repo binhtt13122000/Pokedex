@@ -55,16 +55,17 @@ const routes = [
 ]
 
 //public route
-export const PublicRoute = ({ component: Component, ...rest }) => {
+export const PublicRoute = ({ component: Component,count , ...rest }) => {
     return <Route {...rest} render={
         props => {
-            return <Component {...props} key={window.location.pathname} />
+            return <Component count={count} {...props} key={window.location.pathname} />
         }}
     />
 }
 
 //render
-export const RouterComponent = () => {
+export const RouterComponent = (props) => {
+    const { count } = props;
     return <Switch>
         {routes.map((route, index) => {
             if (route.exact) {
@@ -72,9 +73,11 @@ export const RouterComponent = () => {
                     exact
                     path={route.path}
                     component={route.component}
+                    count={count}
                 />
             }
             return <PublicRoute key={index}
+                count={count}
                 path={route.path}
                 component={route.component}
             />
