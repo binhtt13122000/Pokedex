@@ -1,6 +1,6 @@
-This project was bootstrapped with [Create React App](https://github.com/facebook/create-react-app).
+This project was developed by following [PokeAPI](https://pokeapi.co/)
 
-## Available Scripts
+## Some feature
 
 In the project directory, you can run:
 
