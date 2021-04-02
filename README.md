@@ -14,7 +14,7 @@
 
 ### Some feature
 
-1. Show list pokemons:  ![Pokemons list](https://drive.google.com/file/d/15KQ-rK-sQLWJ45jZz8LflJa-YVMwaxFR/view?usp=sharing)
+1. Show list pokemons:  ![Pokemons list](https://drive.google.com/uc?export=view&id=15KQ-rK-sQLWJ45jZz8LflJa-YVMwaxFR)
 2. Show pokemon detail: ![Pokemon detail](https://drive.google.com/file/d/1fRX4t8xLoBQ2DUeFyvj4lMLc-nBk2MLt/view)
 3. Show type details: ![Type details](https://drive.google.com/file/d/13qQhUdyv9FfuIyDV0h4QelkM5Zm2bsw0/view?usp=sharing)
 4. And many features
